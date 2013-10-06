@@ -7,7 +7,7 @@ module Titanup
 
     def initialize( graph, gid, properties )
       @graph      = graph
-      @gid        = gid.to_i.to_i
+      @gid        = gid
       @properties = to_props( properties )
     end
 

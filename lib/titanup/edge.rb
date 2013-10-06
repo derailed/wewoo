@@ -35,8 +35,8 @@ module Titanup
     def initialize( graph, gid, from_gid, to_gid, label, properties )
       super( graph, gid, properties )
 
-      @from_gid = from_gid.to_i
-      @to_gid   = to_gid.to_i
+      @from_gid = from_gid
+      @to_gid   = to_gid
       @label    = label
     end
   end

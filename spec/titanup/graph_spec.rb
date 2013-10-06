@@ -124,10 +124,10 @@ module Titanup
         expect( graph.edges ).to have(1).item
         edge = graph.edges.first
         expect( edge.class ).to            eq Edge
-        expect( edge.gid ).to              eq 1
+        expect( edge.gid ).to              eq "1"
         expect( edge.label ).to            eq 'friend'
-        expect( edge.from_gid ).to         eq 1
-        expect( edge.to_gid ).to           eq 2
+        expect( edge.from_gid ).to         eq v1.gid
+        expect( edge.to_gid ).to           eq v2.gid
         expect( edge.properties.group ).to eq 'derailed'
         expect( edge.properties.city ).to  eq 'denver'
       end
