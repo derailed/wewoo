@@ -1,5 +1,5 @@
-module Titanup
-  class Vertex < Titanup::Element
+module Wewoo
+  class Vertex < Wewoo::Element
     include Adapter
 
     def self.from_hash( graph, hash )

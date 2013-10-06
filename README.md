@@ -1,12 +1,12 @@
-# Titanup
+# WeWoo
 
-TODO: Write a gem description
+Manage your graph databases with Ruby.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'titanup'
+    gem 'wewoo'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install titanup
+    $ gem install wewoo
 
 ## Usage
 

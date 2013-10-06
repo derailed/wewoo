@@ -1,3 +1,3 @@
-module Titanup
+module Wewoo
   VERSION = "0.0.1"
 end

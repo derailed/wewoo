@@ -1,4 +1,4 @@
-module Titanup
+module Wewoo
   module Adapter
     class NoDataError           < RuntimeError; end
     class InvalidRequestError   < RuntimeError; end

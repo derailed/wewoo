@@ -1,4 +1,4 @@
-module Titanup
+module Wewoo
   class Element
     attr_reader   :gid, :graph
     attr_accessor :properties

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Titanup
+module Wewoo
   describe Edge do
     let(:graph ) { Graph.new( :test_graph ) }
 

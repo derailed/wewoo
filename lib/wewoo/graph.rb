@@ -1,9 +1,9 @@
 require 'typhoeus'
 require 'json'
 require 'map'
-require 'titanup/adapter'
+require 'wewoo/adapter'
 
-module Titanup
+module Wewoo
   class Graph
     include Adapter
 
@@ -120,7 +120,7 @@ module Titanup
     def hydrate( res )
       res.map do |r|
         type = r.delete( '_type' )
-        Object.const_get( "Titanup::#{type.capitalize}" ).from_hash( self, r )
+        Object.const_get( "Wewoo::#{type.capitalize}" ).from_hash( self, r )
       end
     end
   end

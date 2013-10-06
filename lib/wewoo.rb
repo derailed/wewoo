@@ -1,6 +1,6 @@
-require "titanup/version"
+require "wewoo/version"
 
-module Titanup
+module Wewoo
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH    = ::File.dirname(LIBPATH) + ::File::SEPARATOR  
   
@@ -16,4 +16,4 @@ module Titanup
   end  
 end
 
-Titanup.require_all_libs_relative_to File.expand_path( "titanup", Titanup::LIBPATH )
+Wewoo.require_all_libs_relative_to File.expand_path( "wewoo", Wewoo::LIBPATH )

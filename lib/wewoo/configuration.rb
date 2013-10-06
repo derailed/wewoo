@@ -1,4 +1,4 @@
-module Titanup
+module Wewoo
   class Configuration
     def self.url(value=nil)
       @url ||= begin

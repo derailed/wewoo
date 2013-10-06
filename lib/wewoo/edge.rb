@@ -1,6 +1,6 @@
-require 'titanup/element'
+require 'wewoo/element'
 
-module Titanup
+module Wewoo
   class Edge < Element
     attr_accessor :label, :from_gid, :to_gid
 
