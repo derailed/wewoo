@@ -20,6 +20,11 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+## Releases
+
+0.0.1 Initial drop
+0.0.2 Enable user specified ids
+
 ## Contributing
 
 1. Fork it

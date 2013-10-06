@@ -18,14 +18,14 @@ module Wewoo
     end
 
     context 'Query' do
-      let(:v1)     { graph.add_vertex( 1, name: 'fred' , age: 20 ) }
-      let(:v2)     { graph.add_vertex( 2, name: 'joe'  , age: 30 ) }
-      let(:v3)     { graph.add_vertex( 3, name: 'max'  , age: 40 ) }
-      let(:v4)     { graph.add_vertex( 4, name: 'blee' , age: 50 ) }
-      let!(:e_1_2) { graph.add_edge( 1, v1.gid, v2.gid, :friend ) } 
-      let!(:e_1_3) { graph.add_edge( 2, v1.gid, v3.gid, :friend ) } 
-      let!(:e_2_3) { graph.add_edge( 3, v2.gid, v3.gid, :friend ) } 
-      let!(:e_3_4) { graph.add_edge( 4, v3.gid, v4.gid, :friend ) } 
+      let(:v1)     { graph.add_vertex( id:1, name:'fred', age:20 ) }
+      let(:v2)     { graph.add_vertex( id:2, name:'joe' , age:30 ) }
+      let(:v3)     { graph.add_vertex( id:3, name:'max' , age:40 ) }
+      let(:v4)     { graph.add_vertex( id:4, name:'blee', age:50 ) }
+      let!(:e_1_2) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) } 
+      let!(:e_1_3) { graph.add_edge( v1.gid, v3.gid, :friend, id:2 ) } 
+      let!(:e_2_3) { graph.add_edge( v2.gid, v3.gid, :friend, id:3 ) } 
+      let!(:e_3_4) { graph.add_edge( v3.gid, v4.gid, :friend, id:4 ) } 
 
       it 'retrieves frienships correctly' do
         edges = graph.query( "g.v(1).outE('friend')" )
@@ -53,7 +53,7 @@ module Wewoo
     end
 
     context 'Vertices' do
-      let!(:v1) { graph.add_vertex( 1, name: 'fred', age: 20 ) }
+      let!(:v1) { graph.add_vertex( id:1, name:'fred', age:20 ) }
 
       it 'creates a vertex correctly' do
         vertices = graph.vertices
@@ -81,7 +81,7 @@ module Wewoo
       end
 
       it 'updates a node correctly' do
-        graph.add_vertex( v1.gid, age: 18 )
+        graph.add_vertex( id:v1.gid, age:18 )
 
         expect( graph.vertices ).to have(1).item
         expect( graph.vertices.first.properties.age ).to eq '18'
@@ -96,8 +96,8 @@ module Wewoo
       end
 
       context 'connected' do
-        let!(:v2) { graph.add_vertex( 2, name: 'blee', age: 50 ) }
-        let!(:e1) { graph.add_edge( 1, v1.gid, v2.gid, :friend ) } 
+        let!(:v2) { graph.add_vertex( id:2, name:'blee', age:50 ) }
+        let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) } 
 
         it 'deletes an origin node correctly' do
           graph.remove_vertex( v1.gid )
@@ -116,9 +116,10 @@ module Wewoo
     end
 
     context 'Edges' do
-      let!(:v1) { graph.add_vertex( 1, name: 'blee', age: 25 ) }
-      let!(:v2) { graph.add_vertex( 2, name: 'fred', age: 30 ) }
-      let!(:e1) { graph.add_edge( 1, v1.gid, v2.gid, :friend, group: :derailed, city: :denver ) } 
+      let!(:v1) { graph.add_vertex( id:1, name:'blee', age:25 ) }
+      let!(:v2) { graph.add_vertex( id:2, name:'fred', age:30 ) }
+      let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend,
+                                  id: 1, group: :derailed, city: :denver ) } 
 
       it 'creates an edge correctly' do
         expect( graph.edges ).to have(1).item
