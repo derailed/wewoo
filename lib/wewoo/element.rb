@@ -13,7 +13,7 @@ module Wewoo
     alias :props :properties
 
     def to_props( properties )
-      Map( *properties.map{ |k,v| [k,(v.is_a?(Hash) ? v['value'] : v)] }.flatten )
+      Map( properties )
     end
   end
 end

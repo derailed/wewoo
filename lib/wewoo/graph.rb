@@ -53,11 +53,21 @@ module Wewoo
     def add_vertex( props={} )
       id = props.delete(:id)
       if id
-        Vertex.from_hash( self, post(u(%W[vertices #{id}]), params: props))
+        Vertex.from_hash( self,
+                          post( u( %W[vertices #{id}] ),
+                                body: props.to_json, 
+                                headers:
+                                  { 'Content-Type'=>
+                                    'application/json'}))
       else
         v = Vertex.from_hash( self, post(u :vertices) )
-        unless props.empty?
-          Vertex.from_hash(self, post(u(%W[vertices #{v.gid}]), params:props))
+        unless properties.empty?
+          Vertex.from_hash( self,
+                            post( u( %W[vertices #{v.gid}] ),
+                                  body:props.to_json,
+                                  headers:
+                                    { 'Content-Type'=>
+                                      'application/json' } ) )
         end
       end
     end

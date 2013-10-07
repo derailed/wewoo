@@ -80,8 +80,42 @@ module Wewoo
 
         expect( vertices ).to have(1).item
         expect( vertices.first.class ).to eq Vertex
-        expect( vertices.first.properties.age ).to eq '20'
+        expect( vertices.first.properties.age ).to eq 20
         expect( vertices.first.properties.name ).to eq 'fred'
+      end
+      
+      context 'mine types' do
+        it 'coerve floats correctly' do 
+          v = graph.add_vertex( id:2, weight: 18.5 )
+          expect( v.properties.weight ).to eq 18.5
+        end
+
+        it 'coerce integer correctly' do
+          v = graph.add_vertex( id:2, age: 30 )
+          expect( v.properties.age ).to eq 30
+        end
+
+        it 'coerce boolean correctly' do
+          v = graph.add_vertex( id:2, dead: false )
+          expect( v.properties.dead ).to eq false
+        end
+
+        it 'coerce array correctly' do
+          v = graph.add_vertex( id:2, blees: [1,2,3] )
+          expect( v.properties.blees ).to eq [1,2,3]
+        end
+
+        it 'coerce hash correctly' do
+          hash = {a:1,b:2,c:3}
+          v = graph.add_vertex( id:2, blees: hash )
+          expect( v.properties.blees ).to eq hash
+        end
+
+        it 'coerce complex types correctly' do
+          hash = {a:[1,2,3],b:2.0,c:3}
+          v = graph.add_vertex( id:2, blees: hash )
+          expect( v.properties.blees ).to eq hash
+        end
       end
      
       context 'find' do
@@ -104,7 +138,7 @@ module Wewoo
         graph.add_vertex( id:v1.gid, age:18 )
 
         expect( graph.vertices ).to have(1).item
-        expect( graph.vertices.first.properties.age ).to eq '18'
+        expect( graph.vertices.first.properties.age ).to eq 18
       end
 
       it 'deletes a node correctly' do
