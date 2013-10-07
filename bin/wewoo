@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+$:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+
+require 'bundler'
+Bundler.require
+require 'wewoo'
+require 'irb'
+
+Main {
+  def run
+    puts "WeWoo Console"
+    IRB.start(__FILE__)
+  end
+}

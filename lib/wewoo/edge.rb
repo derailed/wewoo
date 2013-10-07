@@ -2,6 +2,8 @@ require 'wewoo/element'
 
 module Wewoo
   class Edge < Element
+    include Adapter
+
     attr_accessor :label, :from_gid, :to_gid
 
     def self.from_hash( graph, hash )
@@ -22,13 +24,16 @@ module Wewoo
     end
 
     def get_vertex( direction )
-     id = direction == :in ? from_gid : to_gid
+     id = direction == :in ? to_gid : from_gid
      graph.get_vertex( id )
     end
+    def in;  get_vertex(:in); end
+    def out; get_vertex(:out); end
 
     def to_s
      "e(#{self.gid}) [#{from_gid}-#{label}-#{to_gid}]"
     end
+    alias :inspect :to_s
 
     private
    

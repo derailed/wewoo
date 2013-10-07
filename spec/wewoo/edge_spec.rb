@@ -16,11 +16,11 @@ module Wewoo
       let!(:e1_3) { graph.add_edge( 1, 3, :friend, id:2 ) }
 
       it "fetches edge head correctly" do
-        expect( e1_2.get_vertex( :in ) ).to eq v1
+        expect( e1_2.in ).to eq v2
       end
 
       it "fetches edge tail correctly" do
-        expect( e1_2.get_vertex( :out ) ).to eq v2
+        expect( e1_2.out ).to eq v1
       end
     end
   end

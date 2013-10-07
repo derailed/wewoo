@@ -8,6 +8,12 @@ module Wewoo
       graph.clear
     end
 
+    it "show all available graphs" do
+      graphs = Graph.available_graphs
+
+      expect( graphs ).to_not be_empty
+    end
+
     it 'opens a graph correctly' do
       expect( graph.vertices ).to be_empty
       expect( graph.edges ).to be_empty
@@ -15,6 +21,15 @@ module Wewoo
 
     it 'errors out if a graph does not exist' do
       expect{ Graph.new( :test_yo ) }.to raise_error
+    end
+
+    pending 'list available indexes correctly' do
+      expect( graph.key_indices.vertex).to be_empty
+      expect( graph.key_indices.edge).to be_empty
+
+      graph.set_key_index( :vertex, :fred )
+      expect( graph.key_indices.vertex ).to have(1).item
+      #graph.drop_key_index( type: :vertex, :fred )
     end
 
     context 'Query' do
@@ -49,6 +64,11 @@ module Wewoo
         expect( vertices ).to       have(2).items
         expect( vertices.first ).to eq v4
         expect( vertices.last ).to  eq v3
+      end
+      
+      it "paginates results correctly" do
+        vertices = graph.query( "g.V", page:1, per_page:2 )
+        expect( vertices ).to have(2).items
       end
     end
 

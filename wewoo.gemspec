@@ -21,7 +21,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'typhoeus'                 , '~> 0.6.5'
   spec.add_dependency 'map'                      , '~> 6.5.1'
-  
+  spec.add_dependency 'main'                     , '~> 5.2.0'
+
   spec.add_development_dependency "bundler"      , '~> 1.3'
   spec.add_development_dependency "rake"         , '~> 10.1.0'
   spec.add_development_dependency "rspec"        , '~> 2.14.1'

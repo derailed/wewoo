@@ -4,6 +4,8 @@ require 'map'
 
 module Wewoo
   module Adapter
+    module_function
+
     class NoDataError           < RuntimeError; end
     class InvalidRequestError   < RuntimeError; end
 
@@ -11,7 +13,7 @@ module Wewoo
       handle_response( Typhoeus.get( url, opts ) )
     end
 
-    def post( url, opts )
+    def post( url, opts={} )
       handle_response( Typhoeus.post( url, opts ) )
     end
 
@@ -19,12 +21,19 @@ module Wewoo
       handle_response( Typhoeus.delete( url, opts ) )
     end
 
-    def handle_response( resp )
-      if const_defined? Rails
-        Rails.logger.info ">> Wewoo URL: #{resp.effective_url}"
+    def log( message )
+      return unless Configuration.debug
+
+      msg = "[Wewoo] #{message}"
+      if Object.const_defined? :Rails
+        Rails.logger.info msg
       else
-        puts ">> Wewoo URL: #{resp.effective_url}"
+        puts msg
       end
+    end
+
+    def handle_response( resp )
+      log "URL: #{resp.effective_url}"
 
       unless resp.success?        
         error = "-- " + JSON.parse( resp.response_body )['message'] rescue ""        

@@ -10,9 +10,10 @@ module Wewoo
       @gid        = gid
       @properties = to_props( properties )
     end
+    alias :props :properties
 
     def to_props( properties )
-      Map( *properties.map{ |k,v| [k,v['value']||v] }.flatten )
+      Map( *properties.map{ |k,v| [k,(v.is_a?(Hash) ? v['value'] : v)] }.flatten )
     end
   end
 end

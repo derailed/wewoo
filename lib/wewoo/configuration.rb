@@ -1,5 +1,9 @@
 module Wewoo
   class Configuration
+    def self.debug(value=false)
+      @debug ||= value
+    end
+
     def self.url(value=nil)
       @url ||= begin
         url = value || ENV['TITANUP_URL'] || default_url

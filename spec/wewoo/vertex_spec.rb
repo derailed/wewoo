@@ -17,19 +17,19 @@ module Wewoo
 
       context "edges" do
         it "fetches out edges correctly" do
-          edges = v1.get_edges(:out)
+          edges = v1.outE
 
           expect( edges ).to have(2).items
           expect( edges.first ).to eq e1_3
           expect( edges.last ).to  eq e1_2
 
-          expect( v2.get_edges(:out) ).to have(0).items
+          expect( v2.outE ).to have(0).items
         end
 
         it "fetches in edges correctly" do
-          expect( v1.get_edges( :in ) ).to have(0).items
+          expect( v1.inE ).to have(0).items
 
-          edges = v2.get_edges( :in )
+          edges = v2.inE
           expect( edges ).to have(1).items
           expect( edges.first ).to eq e1_2
         end
@@ -37,23 +37,23 @@ module Wewoo
  
       context "vertices" do
         it "fetches out vertices correctly" do
-          vertices = v1.get_vertices(:out)
+          vertices = v1.out
 
           expect( vertices ).to have(2).items
           expect( vertices.first ).to eq v3
           expect( vertices.last ).to  eq v2
 
-          expect( v2.get_vertices(:out) ).to have(0).items
+          expect( v2.out ).to have(0).items
         end
 
         it "fetches in edges correctly" do
-          expect( v1.get_vertices( :in ) ).to have(0).items
+          expect( v1.in ).to have(0).items
 
-          vertices = v2.get_vertices( :in )
+          vertices = v2.in
           expect( vertices ).to have(1).items
           expect( vertices.first ).to eq v1
         end
-        end
+      end
     end
   end
 end

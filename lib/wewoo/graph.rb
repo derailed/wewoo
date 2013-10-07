@@ -9,9 +9,13 @@ module Wewoo
 
     class UnknownGraphError < RuntimeError; end
 
-    attr_reader :url
+    attr_reader :url, :name
 
-    # BOZO !! Validate graph exists!
+    def self.available_graphs
+      res = Adapter::get( "#{Configuration.url}/graphs" )
+      res.graphs
+    end
+
     def initialize( name )
       @name = name
       @base_url = "#{Configuration.url}/graphs"
@@ -19,9 +23,22 @@ module Wewoo
       validate
     end
 
+    # BOZO !! Got to be a better way... 
     def clear
       vertices.each { |v| delete( u %W[vertices #{v.gid}] ) }
       edges.each    { |e| delete( u %W[edges    #{e.gid}] ) }
+    end
+
+    def key_indices
+      Map[ *get( u(:keyindices ) ).flatten]
+    end
+
+    def set_key_index( type, key )
+      post( u( %W[keyindices #{type} #{key}] ) )
+    end
+
+    def drop_index( index_name )
+      delete( u( %W[indices #{index_name}] ) )
     end
 
     def index( index_name, clazz:'vertex', options:{} )
@@ -50,10 +67,12 @@ module Wewoo
         Vertex.from_hash( self, res ) 
       end
     end
+    alias :V :vertices
 
     def get_vertex( id )
      Vertex.from_hash( self, get( u %W[vertices #{id}] ) )
     end
+    alias :v :get_vertex
 
     def get_vertices( key, value, page:nil, per_page:nil )
       params = { key: key, value: value }.merge page_params( page, per_page )
@@ -90,6 +109,7 @@ module Wewoo
     def get_edge( gid )
       Edge.from_hash( self, get( u %W[edges #{gid}] ) )
     end
+    alias :e :get_edge
 
     def get_edges( key, value )
       params = { key: key, value: value }
@@ -103,6 +123,12 @@ module Wewoo
         Edge.from_hash( self, res )
       end
     end
+    alias :E :edges
+
+    def to_s
+      name
+    end
+    alias inspect to_s
 
     private
 
@@ -119,10 +145,15 @@ module Wewoo
       end
     end
 
+    # BOZO !! This is wrong 
     def hydrate( res )
       res.map do |r|
         type = r.delete( '_type' )
-        Object.const_get( "Wewoo::#{type.capitalize}" ).from_hash( self, r )
+        if type
+          Object.const_get( "Wewoo::#{type.capitalize}" ).from_hash( self, r )
+        else
+          r
+        end
       end
     end
 
