@@ -20,6 +20,12 @@ module Wewoo
     end
 
     def handle_response( resp )
+      if const_defined? Rails
+        Rails.logger.info ">> Wewoo URL: #{resp.effective_url}"
+      else
+        puts ">> Wewoo URL: #{resp.effective_url}"
+      end
+
       unless resp.success?        
         error = "-- " + JSON.parse( resp.response_body )['message'] rescue ""        
         raise InvalidRequestError, "<#{resp.response_code}> " + 

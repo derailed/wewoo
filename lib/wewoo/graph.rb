@@ -81,7 +81,6 @@ module Wewoo
       else
         Edge.from_hash( self, post( u(:edges), {params: params} ) )
       end
-
     end
 
     def remove_edge( gid )
@@ -130,8 +129,8 @@ module Wewoo
     def page_params( page, per_page )
       return {} unless page and per_page
       
-      { 'rexter.offset_start' => (page-1)*per_page,
-        'rexter.offset_end'   => page*per_page }
+      { 'rexster.offset.start' => (page-1)*per_page,
+        'rexster.offset.end'   => page*per_page }
     end
   end
 end
