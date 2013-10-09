@@ -91,6 +91,13 @@ module Wewoo
     end
     alias :v :get_vertex
 
+    def vertex_exists?( id )
+      v(id)
+      true
+    rescue
+      false
+    end
+
     def get_vertices( key, value, page:nil, per_page:nil )
       params = { key: key, value: value }.merge page_params( page, per_page )
 
