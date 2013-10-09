@@ -8,6 +8,10 @@ module Wewoo
       graph.clear
     end
 
+    it 'reports some stats on inspect' do
+      expect( graph.to_s ).to eq 'test_graph [Vertices:0, Edges:0]'
+    end
+
     it "show all available graphs" do
       graphs = Graph.available_graphs
 
@@ -23,14 +27,14 @@ module Wewoo
       expect{ Graph.new( :test_yo ) }.to raise_error
     end
 
-    pending 'list available indexes correctly' do
-      expect( graph.key_indices.vertex).to be_empty
-      expect( graph.key_indices.edge).to be_empty
+    #pending 'list available indexes correctly' do
+      #expect( graph.key_indices.vertex).to be_empty
+      #expect( graph.key_indices.edge).to be_empty
 
-      graph.set_key_index( :vertex, :fred )
-      expect( graph.key_indices.vertex ).to have(1).item
-      #graph.drop_key_index( type: :vertex, :fred )
-    end
+      #graph.set_key_index( :vertex, :fred )
+      #expect( graph.key_indices.vertex ).to have(1).item
+      ##graph.drop_key_index( type: :vertex, :fred )
+    #end
 
     context 'Query' do
       let(:v1)     { graph.add_vertex( id:1, name:'fred', age:20 ) }
@@ -84,6 +88,16 @@ module Wewoo
         expect( vertices.first.properties.name ).to eq 'fred'
       end
       
+      it 'updates a vertex correctly' do
+        v_prime = graph.update_vertex( v1.gid, blee:'duh', weight: 160.5 )
+
+        expect( v_prime ).to_not be_nil
+        expect( v_prime.properties.blee ).to  eq 'duh'
+        expect( v_prime.properties.weight ).to eq 160.5
+        expect( v_prime.properties.exist? :name ).to eq false
+        expect( v_prime.properties.exist? :weight ).to eq false
+      end
+
       context 'mine types' do
         it 'coerve floats correctly' do 
           v = graph.add_vertex( id:2, weight: 18.5 )
@@ -185,6 +199,15 @@ module Wewoo
         expect( edge.to_gid ).to           eq v2.gid
         expect( edge.properties.group ).to eq 'derailed'
         expect( edge.properties.city ).to  eq 'denver'
+      end
+
+      it 'updates an edge correctly' do
+        e_prime = graph.update_edge( e1.gid, name: :fred, approved: true )
+
+        expect( e_prime ).to_not                      be_nil
+        expect( e_prime.properties.name ).to          eq 'fred'
+        expect( e_prime.properties.approved ).to      eq true
+        expect( e_prime.properties.exist? :group ).to eq false
       end
 
       context 'find' do

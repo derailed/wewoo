@@ -17,6 +17,10 @@ module Wewoo
       handle_response( Typhoeus.post( url, opts ) )
     end
 
+    def put( url, opts={} )
+      handle_response( Typhoeus.put( url, opts ) )
+    end
+
     def delete( url, opts={} )
       handle_response( Typhoeus.delete( url, opts ) )
     end

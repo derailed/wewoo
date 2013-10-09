@@ -72,6 +72,13 @@ module Wewoo
       end
     end
 
+    def update_vertex( id, props )
+      res = put( u( %W[vertices #{id}] ), 
+            body:    props.to_json,  
+            headers: { 'Content-Type'=> 'application/json'} )
+      Vertex.from_hash( self, res )
+    end
+
     def vertices( page:nil, per_page:nil )
       get( u(:vertices), {params: page_params(page, per_page)} ).map do |res| 
         Vertex.from_hash( self, res ) 
@@ -95,6 +102,13 @@ module Wewoo
 
     def remove_vertex( id )
       delete( u(%W[vertices #{id}] ) )
+    end
+
+    def update_edge( id, props )
+      res = put( u( %W[edges #{id}] ), 
+            body: props.to_json,  
+            headers: { 'Content-Type'=> 'application/json'} )
+      Edge.from_hash( self, res )
     end
 
     def add_edge( from_id, to_id, label, props={} )
@@ -136,7 +150,11 @@ module Wewoo
     alias :E :edges
 
     def to_s
-      name
+      res = get( url, headers: { 'Content-Type' =>
+                                 'application/vnd.rexster-typed-v1+json' } )
+      stats = res.graph.match( /.*\[vertices:(\d+) edges:(\d+)\]/ ).captures
+
+      "#{name} [Vertices:#{stats.first}, Edges:#{stats.last}]"
     end
     alias inspect to_s
 
@@ -147,8 +165,7 @@ module Wewoo
     end
 
     def validate
-      resp = Typhoeus.get( @base_url)
-      res  = handle_response( resp )
+      res = get( @base_url )
 
       unless res.graphs.include?( @name.to_s )
         raise UnknownGraphError, "Unable to locate graph named `#{@name}"
