@@ -98,6 +98,13 @@ module Wewoo
       false
     end
 
+    def edge_exists?( id )
+      e(id)
+      true
+    rescue
+      false
+    end
+
     def get_vertices( key, value, page:nil, per_page:nil )
       params = { key: key, value: value }.merge page_params( page, per_page )
 
