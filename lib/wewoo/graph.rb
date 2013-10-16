@@ -46,8 +46,9 @@ module Wewoo
     end
 
     def query( command, page:nil, per_page:nil )
-      hydrate get( u(%w[tp gremlin]),
-                   params:{script: command}.merge(page_params(page, per_page)))
+      get( u(%w[tp gremlin]),
+           params:{script: command}.merge(page_params(page, per_page)),
+           headers: { 'Content-Type'=> 'application/json'} )
     end
 
     def add_vertex( props={} )

@@ -50,24 +50,30 @@ module Wewoo
         edges = graph.query( "g.v(1).outE('friend')" )
 
         expect( edges ).to        have(2).items
-        expect( edges.first ).to  eq e_1_3
-        expect( edges.last ).to   eq e_1_2
+        res = {"_id"=>"2", "_type"=>"edge", "_outV"=>"1", "_inV"=>"3", "_label"=>"friend"}
+        expect( edges.first ).to eq res
+        res = {"_id"=>"1", "_type"=>"edge", "_outV"=>"1", "_inV"=>"2", "_label"=>"friend"}
+        expect( edges.last ).to   eq res
       end
 
       it 'retrieves friends correctly' do
         vertices = graph.query( "g.v(1).out('friend')" )
 
         expect( vertices ).to       have(2).items
-        expect( vertices.first ).to eq v3
-        expect( vertices.last ).to  eq v2
+        res = {"age"=>40, "name"=>"max", "_id"=>"3", "_type"=>"vertex"}
+        expect( vertices.first ).to eq res
+        res = {"age"=>30, "name"=>"joe", "_id"=>"2", "_type"=>"vertex"}
+        expect( vertices.last ).to  eq res
       end
 
       it 'retrieves friends of friends correctly' do
         vertices = graph.query( "g.v(1).out('friend').out('friend')" )
 
         expect( vertices ).to       have(2).items
-        expect( vertices.first ).to eq v4
-        expect( vertices.last ).to  eq v3
+        res = {"age"=>50, "name"=>"blee", "_id"=>"4", "_type"=>"vertex"}
+        expect( vertices.first ).to eq res
+        res = {"age"=>40, "name"=>"max", "_id"=>"3", "_type"=>"vertex"}
+        expect( vertices.last ).to  eq res
       end
       
       it "paginates results correctly" do
