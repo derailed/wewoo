@@ -1,5 +1,6 @@
 require 'wewoo/element'
 
+# BOZO !! Change in/out from/to??
 module Wewoo
   class Edge < Element
     include Adapter
@@ -16,15 +17,15 @@ module Wewoo
     end
 
     def ==( other )
-      self.gid        == other.gid and 
+      self.gid        == other.gid and
       self.from_gid   == other.from_gid and
       self.to_gid     == other.to_gid and
-      self.label      == other.label and 
+      self.label      == other.label and
       self.properties == other.properties
     end
 
     def get_vertex( direction )
-     id = direction == :in ? to_gid : from_gid
+     id = (direction == :in ? to_gid : from_gid)
      graph.get_vertex( id )
     end
     def in;  get_vertex(:in); end
@@ -36,7 +37,7 @@ module Wewoo
     alias :inspect :to_s
 
     private
-   
+
     def initialize( graph, gid, from_gid, to_gid, label, properties )
       super( graph, gid, properties )
 

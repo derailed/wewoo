@@ -7,9 +7,4 @@ guard 'rspec', cli: "--color --format Fuubar --fail-fast --drb", all_after_pass:
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/wewoo/(.+)\.rb$})     { |m| "spec/wewoo/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
-
-  # Rails example
-  watch(%r{^spec/.+_spec\.rb$})
-  watch(%r{^spec/support/(.+)\.rb$})                   { "spec" }
-  watch('spec/spec_helper.rb')                         { "spec" }
 end

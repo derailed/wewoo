@@ -6,7 +6,7 @@ module Wewoo
 
     def self.url(value=nil)
       @url ||= begin
-        url = value || ENV['TITANUP_URL'] || default_url
+        url = value || ENV['WEWOO_URL'] || default_url
         url.to_s.gsub( %r(/*$), '' )
       end
     end

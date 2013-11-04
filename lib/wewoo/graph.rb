@@ -23,10 +23,11 @@ module Wewoo
       validate
     end
 
-    # BOZO !! Got to be a better way... 
+    # BOZO !! Got to be a better way...
     def clear
-      vertices.each { |v| delete( u %W[vertices #{v.gid}] ) }
-      edges.each    { |e| delete( u %W[edges    #{e.gid}] ) }
+      query( 'g.E.remove();g.V.remove()')
+      #vertices.each { |v| delete( u %W[vertices #{v.gid}] ) }
+      #edges.each    { |e| delete( u %W[edges    #{e.gid}] ) }
     end
 
     def key_indices
@@ -46,7 +47,7 @@ module Wewoo
     end
 
     def query( command, page:nil, per_page:nil )
-      get( u(%w[tp gremlin]),
+      hydrate get( u(%w[tp gremlin]),
            params:{script: command}.merge(page_params(page, per_page)),
            headers: { 'Content-Type'=> 'application/json'} )
     end
@@ -56,7 +57,7 @@ module Wewoo
       if id
         Vertex.from_hash( self,
                           post( u( %W[vertices #{id}] ),
-                                body: props.to_json, 
+                                body: props.to_json,
                                 headers:
                                   { 'Content-Type'=>
                                     'application/json'}))
@@ -74,15 +75,15 @@ module Wewoo
     end
 
     def update_vertex( id, props )
-      res = put( u( %W[vertices #{id}] ), 
-            body:    props.to_json,  
+      res = put( u( %W[vertices #{id}] ),
+            body:    props.to_json,
             headers: { 'Content-Type'=> 'application/json'} )
       Vertex.from_hash( self, res )
     end
 
     def vertices( page:nil, per_page:nil )
-      get( u(:vertices), {params: page_params(page, per_page)} ).map do |res| 
-        Vertex.from_hash( self, res ) 
+      get( u(:vertices), {params: page_params(page, per_page)} ).map do |res|
+        Vertex.from_hash( self, res )
       end
     end
     alias :V :vertices
@@ -120,8 +121,8 @@ module Wewoo
     end
 
     def update_edge( id, props )
-      res = put( u( %W[edges #{id}] ), 
-            body: props.to_json,  
+      res = put( u( %W[edges #{id}] ),
+            body: props.to_json,
             headers: { 'Content-Type'=> 'application/json'} )
       Edge.from_hash( self, res )
     end
@@ -131,9 +132,9 @@ module Wewoo
       params = {
         '_outV'  => from_id,
         '_inV'   => to_id,
-        '_label' => label 
+        '_label' => label
       }.merge( props )
-   
+
       if id
         Edge.from_hash( self, post( u(%W[edges #{id}]), {params: params} ) )
       else
@@ -187,8 +188,9 @@ module Wewoo
       end
     end
 
-    # BOZO !! This is wrong 
+    # BOZO !! This is wrong
     def hydrate( res )
+      return res if res.is_a? Hash
       res.map do |r|
         type = r.delete( '_type' )
         if type
@@ -201,7 +203,7 @@ module Wewoo
 
     def page_params( page, per_page )
       return {} unless page and per_page
-      
+
       { 'rexster.offset.start' => (page-1)*per_page,
         'rexster.offset.end'   => page*per_page }
     end

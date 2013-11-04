@@ -41,41 +41,35 @@ module Wewoo
       let(:v2)     { graph.add_vertex( id:2, name:'joe' , age:30 ) }
       let(:v3)     { graph.add_vertex( id:3, name:'max' , age:40 ) }
       let(:v4)     { graph.add_vertex( id:4, name:'blee', age:50 ) }
-      let!(:e_1_2) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) } 
-      let!(:e_1_3) { graph.add_edge( v1.gid, v3.gid, :friend, id:2 ) } 
-      let!(:e_2_3) { graph.add_edge( v2.gid, v3.gid, :friend, id:3 ) } 
-      let!(:e_3_4) { graph.add_edge( v3.gid, v4.gid, :friend, id:4 ) } 
+      let!(:e_1_2) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) }
+      let!(:e_1_3) { graph.add_edge( v1.gid, v3.gid, :friend, id:2 ) }
+      let!(:e_2_3) { graph.add_edge( v2.gid, v3.gid, :friend, id:3 ) }
+      let!(:e_3_4) { graph.add_edge( v3.gid, v4.gid, :friend, id:4 ) }
 
       it 'retrieves frienships correctly' do
         edges = graph.query( "g.v(1).outE('friend')" )
 
         expect( edges ).to        have(2).items
-        res = {"_id"=>"2", "_type"=>"edge", "_outV"=>"1", "_inV"=>"3", "_label"=>"friend"}
-        expect( edges.first ).to eq res
-        res = {"_id"=>"1", "_type"=>"edge", "_outV"=>"1", "_inV"=>"2", "_label"=>"friend"}
-        expect( edges.last ).to   eq res
+        expect( edges.first ).to eq e_1_3
+        expect( edges.last ).to   eq e_1_2
       end
 
       it 'retrieves friends correctly' do
         vertices = graph.query( "g.v(1).out('friend')" )
 
         expect( vertices ).to       have(2).items
-        res = {"age"=>40, "name"=>"max", "_id"=>"3", "_type"=>"vertex"}
-        expect( vertices.first ).to eq res
-        res = {"age"=>30, "name"=>"joe", "_id"=>"2", "_type"=>"vertex"}
-        expect( vertices.last ).to  eq res
+        expect( vertices.first ).to eq v3
+        expect( vertices.last ).to  eq v2
       end
 
       it 'retrieves friends of friends correctly' do
         vertices = graph.query( "g.v(1).out('friend').out('friend')" )
 
         expect( vertices ).to       have(2).items
-        res = {"age"=>50, "name"=>"blee", "_id"=>"4", "_type"=>"vertex"}
-        expect( vertices.first ).to eq res
-        res = {"age"=>40, "name"=>"max", "_id"=>"3", "_type"=>"vertex"}
-        expect( vertices.last ).to  eq res
+        expect( vertices.first ).to eq v4
+        expect( vertices.last ).to  eq v3
       end
-      
+
       it "paginates results correctly" do
         vertices = graph.query( "g.V", page:1, per_page:2 )
         expect( vertices ).to have(2).items
@@ -93,7 +87,7 @@ module Wewoo
         expect( vertices.first.properties.age ).to eq 20
         expect( vertices.first.properties.name ).to eq 'fred'
       end
-      
+
       it 'updates a vertex correctly' do
         v_prime = graph.update_vertex( v1.gid, blee:'duh', weight: 160.5 )
 
@@ -105,7 +99,7 @@ module Wewoo
       end
 
       context 'mine types' do
-        it 'coerve floats correctly' do 
+        it 'coerve floats correctly' do
           v = graph.add_vertex( id:2, weight: 18.5 )
           expect( v.properties.weight ).to eq 18.5
         end
@@ -137,18 +131,18 @@ module Wewoo
           expect( v.properties.blees ).to eq hash
         end
       end
-     
+
       context 'find' do
         it 'finds a node by id correctly' do
           vertex = graph.get_vertex( v1.gid )
-          
+
           expect( vertex ).to_not be_nil
           expect( vertex ).to eq  v1
         end
 
         it 'finds a node by properties correctly' do
           candidates = graph.get_vertices( :name, :fred )
-          
+
           expect( candidates ).to_not   be_nil
           expect( candidates.first ).to eq v1
         end
@@ -171,7 +165,7 @@ module Wewoo
 
       context 'connected' do
         let!(:v2) { graph.add_vertex( id:2, name:'blee', age:50 ) }
-        let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) } 
+        let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) }
 
         it 'deletes an origin node correctly' do
           graph.remove_vertex( v1.gid )
@@ -193,7 +187,7 @@ module Wewoo
       let!(:v1) { graph.add_vertex( id:1, name:'blee', age:25 ) }
       let!(:v2) { graph.add_vertex( id:2, name:'fred', age:30 ) }
       let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend,
-                                  id: 1, group: :derailed, city: :denver ) } 
+                                  id: 1, group: :derailed, city: :denver ) }
 
       it 'creates an edge correctly' do
         expect( graph.edges ).to have(1).item
@@ -234,7 +228,7 @@ module Wewoo
         graph.remove_edge( e1.gid )
 
         expect( graph.edges ).to be_empty
-        expect( graph.vertices ).to have(2).items 
+        expect( graph.vertices ).to have(2).items
       end
     end
   end

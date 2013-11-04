@@ -9,9 +9,9 @@ module Wewoo
     end
 
     context 'connections' do
-      let!(:v1)   { graph.add_vertex( id:1, name: :fred, age:10 ) } 
-      let!(:v2)   { graph.add_vertex( id:2, name: :blee, age:20 ) } 
-      let!(:v3)   { graph.add_vertex( id:3, name: :bob , age:30 ) } 
+      let!(:v1)   { graph.add_vertex( id:1, name: :fred, age:10 ) }
+      let!(:v2)   { graph.add_vertex( id:2, name: :blee, age:20 ) }
+      let!(:v3)   { graph.add_vertex( id:3, name: :bob , age:30 ) }
       let!(:e1_2) { graph.add_edge( 1, 2, :friend, id:1 ) }
       let!(:e1_3) { graph.add_edge( 1, 3, :friend, id:2 ) }
 

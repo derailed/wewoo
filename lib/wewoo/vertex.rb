@@ -1,7 +1,8 @@
 module Wewoo
+  # BOZO !! Need to support chaining!
   class Vertex < Wewoo::Element
     include Adapter
-   
+
     class InvalidDirectionError < RuntimeError; end
 
     def self.from_hash( graph, hash )
@@ -10,17 +11,24 @@ module Wewoo
     end
 
     def get_edges( direction, labels=[] )
+      str_labels = labels.map(&:to_s)
       get( u(map_direction(direction,true)) ).map { |hash|
-        Edge.from_hash( graph, hash )
-      }
+        if labels.empty? or str_labels.include? hash['_label']
+          Edge.from_hash( graph, hash )
+        end
+      }.compact
     end
     def outE ( labels=[] ); get_edges( :out  , labels ); end
     def inE  ( labels=[] ); get_edges( :in   , labels ); end
     def bothE( labels=[] ); get_edges( :both , labels ); end
 
     def get_vertices( direction, labels=[] )
-      get( u(map_direction(direction) ) ).map { |hash| 
-        Vertex.from_hash( graph, hash ) 
+      get_edges(direction,labels).map{ |e|
+        if direction == :both
+          e.in == self ? e.out : e.in
+        else
+          e.get_vertex( direction==:in ? :out : :in )
+        end
       }
     end
     def out ( labels=[] ); get_vertices( :out  , labels ); end
@@ -33,7 +41,7 @@ module Wewoo
     def ==( other )
       self.gid == other.gid and self.properties == other.properties
     end
-    
+
     def to_s
      "v(#{self.gid})"
     end
