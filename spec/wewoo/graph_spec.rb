@@ -41,10 +41,10 @@ module Wewoo
       let(:v2)     { graph.add_vertex( id:2, name:'joe' , age:30 ) }
       let(:v3)     { graph.add_vertex( id:3, name:'max' , age:40 ) }
       let(:v4)     { graph.add_vertex( id:4, name:'blee', age:50 ) }
-      let!(:e_1_2) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) }
-      let!(:e_1_3) { graph.add_edge( v1.gid, v3.gid, :friend, id:2 ) }
-      let!(:e_2_3) { graph.add_edge( v2.gid, v3.gid, :friend, id:3 ) }
-      let!(:e_3_4) { graph.add_edge( v3.gid, v4.gid, :friend, id:4 ) }
+      let!(:e_1_2) { graph.add_edge( v1.id, v2.id, :friend, id:1 ) }
+      let!(:e_1_3) { graph.add_edge( v1.id, v3.id, :friend, id:2 ) }
+      let!(:e_2_3) { graph.add_edge( v2.id, v3.id, :friend, id:3 ) }
+      let!(:e_3_4) { graph.add_edge( v3.id, v4.id, :friend, id:4 ) }
 
       it 'retrieves frienships correctly' do
         edges = graph.query( "g.v(1).outE('friend')" )
@@ -89,7 +89,7 @@ module Wewoo
       end
 
       it 'updates a vertex correctly' do
-        v_prime = graph.update_vertex( v1.gid, blee:'duh', weight: 160.5 )
+        v_prime = graph.update_vertex( v1.id, blee:'duh', weight: 160.5 )
 
         expect( v_prime ).to_not be_nil
         expect( v_prime.properties.blee ).to  eq 'duh'
@@ -134,7 +134,7 @@ module Wewoo
 
       context 'find' do
         it 'finds a node by id correctly' do
-          vertex = graph.get_vertex( v1.gid )
+          vertex = graph.get_vertex( v1.id )
 
           expect( vertex ).to_not be_nil
           expect( vertex ).to eq  v1
@@ -149,7 +149,7 @@ module Wewoo
       end
 
       it 'updates a node correctly' do
-        graph.add_vertex( id:v1.gid, age:18 )
+        graph.add_vertex( id:v1.id, age:18 )
 
         expect( graph.vertices ).to have(1).item
         expect( graph.vertices.first.properties.age ).to eq 18
@@ -158,24 +158,24 @@ module Wewoo
       it 'deletes a node correctly' do
         expect( graph.vertices ).to have(1).item
 
-        graph.remove_vertex( v1.gid )
+        graph.remove_vertex( v1.id )
 
         expect( graph.vertices ).to be_empty
       end
 
       context 'connected' do
         let!(:v2) { graph.add_vertex( id:2, name:'blee', age:50 ) }
-        let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend, id:1 ) }
+        let!(:e1) { graph.add_edge( v1.id, v2.id, :friend, id:1 ) }
 
         it 'deletes an origin node correctly' do
-          graph.remove_vertex( v1.gid )
+          graph.remove_vertex( v1.id )
 
           expect( graph.edges ).to be_empty
           expect( graph.vertices ).to have(1).item
         end
 
         it 'deletes an destination node correctly' do
-          graph.remove_vertex( v2.gid )
+          graph.remove_vertex( v2.id )
 
           expect( graph.edges ).to be_empty
           expect( graph.vertices ).to have(1).item
@@ -186,23 +186,23 @@ module Wewoo
     context 'Edges' do
       let!(:v1) { graph.add_vertex( id:1, name:'blee', age:25 ) }
       let!(:v2) { graph.add_vertex( id:2, name:'fred', age:30 ) }
-      let!(:e1) { graph.add_edge( v1.gid, v2.gid, :friend,
+      let!(:e1) { graph.add_edge( v1.id, v2.id, :friend,
                                   id: 1, group: :derailed, city: :denver ) }
 
       it 'creates an edge correctly' do
         expect( graph.edges ).to have(1).item
         edge = graph.edges.first
         expect( edge.class ).to            eq Edge
-        expect( edge.gid ).to              eq "1"
+        expect( edge.id ).to              eq "1"
         expect( edge.label ).to            eq 'friend'
-        expect( edge.from_gid ).to         eq v1.gid
-        expect( edge.to_gid ).to           eq v2.gid
+        expect( edge.from_id ).to         eq v1.id
+        expect( edge.to_id ).to           eq v2.id
         expect( edge.properties.group ).to eq 'derailed'
         expect( edge.properties.city ).to  eq 'denver'
       end
 
       it 'updates an edge correctly' do
-        e_prime = graph.update_edge( e1.gid, name: :fred, approved: true )
+        e_prime = graph.update_edge( e1.id, name: :fred, approved: true )
 
         expect( e_prime ).to_not                      be_nil
         expect( e_prime.properties.name ).to          eq 'fred'
@@ -212,7 +212,7 @@ module Wewoo
 
       context 'find' do
        it 'find an edge by id correctly' do
-        edge = graph.get_edge( e1.gid )
+        edge = graph.get_edge( e1.id )
 
         expect( edge ).to eq e1
        end
@@ -225,7 +225,7 @@ module Wewoo
       end
 
       it 'deletes an edge correctly' do
-        graph.remove_edge( e1.gid )
+        graph.remove_edge( e1.id )
 
         expect( graph.edges ).to be_empty
         expect( graph.vertices ).to have(2).items

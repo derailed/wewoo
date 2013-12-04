@@ -23,11 +23,8 @@ module Wewoo
       validate
     end
 
-    # BOZO !! Got to be a better way...
     def clear
       query( 'g.E.remove();g.V.remove()')
-      #vertices.each { |v| delete( u %W[vertices #{v.gid}] ) }
-      #edges.each    { |e| delete( u %W[edges    #{e.gid}] ) }
     end
 
     def key_indices
@@ -47,9 +44,9 @@ module Wewoo
     end
 
     def query( command, page:nil, per_page:nil )
-      hydrate get( u(%w[tp gremlin]),
+      ResultSet.new( get( u(%w[tp gremlin]),
            params:{script: command}.merge(page_params(page, per_page)),
-           headers: { 'Content-Type'=> 'application/json'} )
+           headers: { 'Content-Type'=> 'application/json'} ) ).hydrate
     end
 
     def add_vertex( props={} )
@@ -65,7 +62,7 @@ module Wewoo
         v = Vertex.from_hash( self, post(u :vertices) )
         unless properties.empty?
           Vertex.from_hash( self,
-                            post( u( %W[vertices #{v.gid}] ),
+                            post( u( %W[vertices #{v.id}] ),
                                   body:props.to_json,
                                   headers:
                                     { 'Content-Type'=>
@@ -127,11 +124,11 @@ module Wewoo
       Edge.from_hash( self, res )
     end
 
-    def add_edge( from_id, to_id, label, props={} )
+    def add_edge( from, to, label, props={} )
       id = props.delete(:id)
       params = {
-        '_outV'  => from_id,
-        '_inV'   => to_id,
+        '_outV'  => (from.is_a? Vertex) ? from.id : from,
+        '_inV'   => (to.is_a? Vertex) ? to.id : to,
         '_label' => label
       }.merge( props )
 
@@ -142,12 +139,12 @@ module Wewoo
       end
     end
 
-    def remove_edge( gid )
-      delete( u %W[edges #{gid}] )
+    def remove_edge( id )
+      delete( u %W[edges #{id}] )
     end
 
-    def get_edge( gid )
-      Edge.from_hash( self, get( u %W[edges #{gid}] ) )
+    def get_edge( id )
+      Edge.from_hash( self, get( u %W[edges #{id}] ) )
     end
     alias :e :get_edge
 
@@ -185,19 +182,6 @@ module Wewoo
 
       unless res.graphs.include?( @name.to_s )
         raise UnknownGraphError, "Unable to locate graph named `#{@name}"
-      end
-    end
-
-    # BOZO !! This is wrong
-    def hydrate( res )
-      return res if res.is_a? Hash
-      res.map do |r|
-        type = r.delete( '_type' )
-        if type
-          Object.const_get( "Wewoo::#{type.capitalize}" ).from_hash( self, r )
-        else
-          r
-        end
       end
     end
 

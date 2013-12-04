@@ -5,44 +5,44 @@ module Wewoo
   class Edge < Element
     include Adapter
 
-    attr_accessor :label, :from_gid, :to_gid
+    attr_accessor :label, :from_id, :to_id
 
     def self.from_hash( graph, hash )
       hash.delete( '_type' )
-      gid  = hash.delete( '_id' )
+      id  = hash.delete( '_id' )
       from = hash.delete( '_outV' )
       to   = hash.delete( '_inV' )
 
-      Edge.new( graph, gid, from, to, hash.delete('_label'), hash )
+      Edge.new( graph, id, from, to, hash.delete('_label'), hash )
     end
 
     def ==( other )
-      self.gid        == other.gid and
-      self.from_gid   == other.from_gid and
-      self.to_gid     == other.to_gid and
+      self.id        == other.id and
+      self.from_id   == other.from_id and
+      self.to_id     == other.to_id and
       self.label      == other.label and
       self.properties == other.properties
     end
 
     def get_vertex( direction )
-     id = (direction == :in ? to_gid : from_gid)
+     id = (direction == :in ? to_id : from_id)
      graph.get_vertex( id )
     end
     def in;  get_vertex(:in); end
     def out; get_vertex(:out); end
 
     def to_s
-     "e(#{self.gid}) [#{from_gid}-#{label}-#{to_gid}]"
+     "e(#{self.id}) [#{from_id}-#{label}-#{to_id}]"
     end
     alias :inspect :to_s
 
     private
 
-    def initialize( graph, gid, from_gid, to_gid, label, properties )
-      super( graph, gid, properties )
+    def initialize( graph, id, from_id, to_id, label, properties )
+      super( graph, id, properties )
 
-      @from_gid = from_gid
-      @to_gid   = to_gid
+      @from_id = from_id
+      @to_id   = to_id
       @label    = label
     end
   end

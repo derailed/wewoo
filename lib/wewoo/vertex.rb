@@ -39,18 +39,18 @@ module Wewoo
     end
 
     def ==( other )
-      self.gid == other.gid and self.properties == other.properties
+      self.id == other.id and self.properties == other.properties
     end
 
     def to_s
-     "v(#{self.gid})"
+     "v(#{self.id})"
     end
     alias :inspect :to_s
 
     private
 
     def u( path )
-      File.join( graph.url, %W[vertices #{gid} #{path}] )
+      File.join( graph.url, %W[vertices #{id} #{path}] )
     end
 
     def map_direction( direction, edge=nil )

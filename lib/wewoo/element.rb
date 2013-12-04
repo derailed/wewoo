@@ -1,19 +1,25 @@
 module Wewoo
   class Element
-    attr_reader   :gid, :graph
+    attr_reader   :id, :graph
     attr_accessor :properties
+
+    alias :props :properties
 
     private
 
-    def initialize( graph, gid, properties )
+    def initialize( graph, id, properties )
       @graph      = graph
-      @gid        = gid
+      @id         = id
       @properties = to_props( properties )
     end
-    alias :props :properties
 
     def to_props( properties )
-      Map( properties )
+      props = {}
+      properties.each_pair do |k,v|
+        value = ((v.is_a? Hash and v.has_key? 'type') ? v['value'] : v)
+        props[k] = value
+      end
+      Map( props )
     end
   end
 end
