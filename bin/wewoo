@@ -4,11 +4,12 @@ $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 require 'bundler'
 Bundler.require
 require 'wewoo'
-require 'irb'
+require 'pry'
 
 Main {
   def run
     puts "WeWoo Console"
-    IRB.start(__FILE__)
+    Pry.config.prompt_name = "WeWoo"
+    Pry.start
   end
 }
