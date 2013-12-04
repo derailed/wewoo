@@ -48,6 +48,7 @@ module Wewoo
            params:{script: command}.merge(page_params(page, per_page)),
            headers: { 'Content-Type'=> 'application/json'} ) ).hydrate
     end
+    alias :q :query
 
     def add_vertex( props={} )
       id = props.delete(:id)
@@ -133,9 +134,15 @@ module Wewoo
       }.merge( props )
 
       if id
-        Edge.from_hash( self, post( u(%W[edges #{id}]), {params: params} ) )
+        Edge.from_hash( self,
+                        post( u(%W[edges #{id}]),
+                              body: params.to_json,
+                              headers: {'Content-Type'=> 'application/json'} ))
       else
-        Edge.from_hash( self, post( u(:edges), {params: params} ) )
+        Edge.from_hash( self,
+                        post( u(:edges),
+                              body: params.to_json,
+                              headers: {'Content-Type'=> 'application/json'} ))
       end
     end
 

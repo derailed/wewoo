@@ -23,13 +23,14 @@ module Wewoo
         @results = @results.first
       end
 
-      return [build_element( @results )] if graph_element? @results
+      return build_element( @results ) if graph_element? @results
 
       return_type = nil
       out = @results.map do |r|
         if graph_element? r
           build_element( r )
         elsif r.is_a? Hash
+          return_type = :hash
           r.map do |k,v|
             obj = build_element( v )
             {k => obj}
@@ -54,8 +55,8 @@ module Wewoo
       end
      return_type == :hash ? Hash[*out.flatten] : out
     rescue => boom
-puts boom
-boom.backtrace.each{ |l| puts l }
+      #puts boom
+      #boom.backtrace.each{ |l| puts l }
       @results
     end
   end
