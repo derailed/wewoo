@@ -39,20 +39,20 @@ module Wewoo
     def handle_response( resp )
       log "URL: #{resp.effective_url}"
 
-      unless resp.success?        
-        error = "-- " + JSON.parse( resp.response_body )['message'] rescue ""        
-        raise InvalidRequestError, "<#{resp.response_code}> " + 
-              "Failed request:#{resp.effective_url} #{error}" 
+      unless resp.success?
+        error = "-- " + JSON.parse( resp.response_body )['message'] rescue ""
+        raise InvalidRequestError, "<#{resp.response_code}> " +
+              "Failed request:#{resp.effective_url} #{error}"
       end
 
       if resp.body.empty? or resp.body == "null"
         raise NoDataError, "No data found at location #{url}"
       end
-    
-      body = JSON.parse( resp.body ) 
-   
+
+      body = JSON.parse( resp.body )
+
       results = body['results'] || body
       results.is_a?(Hash) ? Map( results ) : results
-    end 
+    end
   end
 end

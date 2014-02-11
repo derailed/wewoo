@@ -5,6 +5,7 @@ if ENV['COV']
 end
 
 require 'wewoo'
+require 'support/graph_sets'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

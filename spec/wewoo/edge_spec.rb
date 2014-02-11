@@ -2,25 +2,34 @@ require 'spec_helper'
 
 module Wewoo
   describe Vertex do
-    let(:graph ) { Graph.new( :test_graph ) }
-
-    before :each do
-      graph.clear
+    before :all do
+      @g = Graph.new(:test_graph)
+      build_test_graph( @g )
     end
 
-    context 'connections' do
-      let!(:v1)   { graph.add_vertex( id:1, name: :fred, age:10 ) }
-      let!(:v2)   { graph.add_vertex( id:2, name: :blee, age:20 ) }
-      let!(:v3)   { graph.add_vertex( id:3, name: :bob , age:30 ) }
-      let!(:e1_2) { graph.add_edge( 1, 2, :friend, id:1 ) }
-      let!(:e1_3) { graph.add_edge( 1, 3, :friend, id:2 ) }
+    context 'equality' do
+      it 'validates two egdes are the same' do
+        expect( @v1.outE(:love) == @v1.outE(:love) ).to eq true
+      end
 
+      it 'validates two egdes are different' do
+        e1, e2 = @v1.outE(:friend).first, @v1.outE(:friend).last
+
+        expect( e1 == e2 ).to eq false
+      end
+
+      it 'validates anything against null' do
+        expect( @v1.outE(:love) == nil ).to be false
+      end
+    end
+
+    context 'vertices' do
       it "fetches edge head correctly" do
-        expect( e1_2.in ).to eq v2
+        expect( @e1.in ).to eq @v2
       end
 
       it "fetches edge tail correctly" do
-        expect( e1_2.out ).to eq v1
+        expect( @e1.out ).to eq @v1
       end
     end
   end

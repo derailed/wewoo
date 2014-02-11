@@ -7,7 +7,8 @@ module Wewoo
   class Graph
     include Adapter
 
-    class UnknownGraphError < RuntimeError; end
+    class UnknownGraphError         < RuntimeError; end
+    class GraphElementNotFoundError < RuntimeError; end
 
     attr_reader :url, :name
 
@@ -24,7 +25,7 @@ module Wewoo
     end
 
     def clear
-      query( 'g.E.remove();g.V.remove()')
+      query( 'g.V.remove()')
     end
 
     def key_indices
@@ -39,6 +40,14 @@ module Wewoo
       delete( u( %W[indices #{index_name}] ) )
     end
 
+    def ensure_index( key, type=:vertex )
+      current_indices = key_indices
+puts "INDICES #{current_indices.inspect}"
+      unless current_indices[type.to_s].include? key.to_s
+        post( u( %W[keyindices #{type} #{key}] ) )
+      end
+    end
+
     def index( index_name, clazz:'vertex', options:{} )
       post( u(%W[indices #{index_name}]), params: {class: clazz}.merge(options))
     end
@@ -51,25 +60,9 @@ module Wewoo
     alias :q :query
 
     def add_vertex( props={} )
-      id = props.delete(:id)
-      if id
-        Vertex.from_hash( self,
-                          post( u( %W[vertices #{id}] ),
-                                body: props.to_json,
-                                headers:
-                                  { 'Content-Type'=>
-                                    'application/json'}))
-      else
-        v = Vertex.from_hash( self, post(u :vertices) )
-        unless properties.empty?
-          Vertex.from_hash( self,
-                            post( u( %W[vertices #{v.id}] ),
-                                  body:props.to_json,
-                                  headers:
-                                    { 'Content-Type'=>
-                                      'application/json' } ) )
-        end
-      end
+      vertex = Vertex.from_hash( self,
+                                 post( u( %W[vertices] ) ) )
+      update_vertex( vertex.id, props )
     end
 
     def update_vertex( id, props )
@@ -86,8 +79,23 @@ module Wewoo
     end
     alias :V :vertices
 
+    def find_vertices( key, value, page:nil, per_page:nil )
+      params = { key: key, value: value }.merge page_params( page, per_page )
+
+      res    = get( u(:vertices), params: params )
+      res.map do |res|
+        Vertex.from_hash( self, res )
+      end
+    end
+
+    def find_vertex( key: key, value: value )
+      Vertex.from_hash( self, get( u %W[vertices], params: {key: key, value: value} ).first )
+    end
+
     def get_vertex( id )
      Vertex.from_hash( self, get( u %W[vertices #{id}] ) )
+    rescue InvalidRequestError => ex
+      raise GraphElementNotFoundError, ex.message
     end
     alias :v :get_vertex
 
@@ -105,15 +113,6 @@ module Wewoo
       false
     end
 
-    def get_vertices( key, value, page:nil, per_page:nil )
-      params = { key: key, value: value }.merge page_params( page, per_page )
-
-      res    = get( u(:vertices), params: params )
-      res.map do |res|
-        Vertex.from_hash( self, res )
-      end
-    end
-
     def remove_vertex( id )
       delete( u(%W[vertices #{id}] ) )
     end
@@ -126,24 +125,15 @@ module Wewoo
     end
 
     def add_edge( from, to, label, props={} )
-      id = props.delete(:id)
       params = {
         '_outV'  => (from.is_a? Vertex) ? from.id : from,
         '_inV'   => (to.is_a? Vertex) ? to.id : to,
         '_label' => label
       }.merge( props )
-
-      if id
-        Edge.from_hash( self,
-                        post( u(%W[edges #{id}]),
-                              body: params.to_json,
-                              headers: {'Content-Type'=> 'application/json'} ))
-      else
-        Edge.from_hash( self,
-                        post( u(:edges),
-                              body: params.to_json,
-                              headers: {'Content-Type'=> 'application/json'} ))
-      end
+      res = post( u( %W[edges] ),
+            body: params.to_json,
+            headers: { 'Content-Type'=> 'application/json'} )
+      Edge.from_hash( self, res )
     end
 
     def remove_edge( id )
@@ -152,14 +142,14 @@ module Wewoo
 
     def get_edge( id )
       Edge.from_hash( self, get( u %W[edges #{id}] ) )
+    rescue InvalidRequestError => ex
+      raise GraphElementNotFoundError, ex.message
     end
     alias :e :get_edge
 
-    def get_edges( key, value )
-      params = { key: key, value: value }
-      get( u(:edges), params: params ).map do |e|
-        Edge.from_hash( self, e )
-      end
+    def find_edges( key, value, page:nil, per_page:nil )
+      params = { key: key, value: value }.merge page_params( page, per_page )
+      get( u(:edges), params: params ).map { |e| Edge.from_hash( self, e ) }
     end
 
     def edges( page:nil, per_page:nil )
