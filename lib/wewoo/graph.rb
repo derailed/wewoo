@@ -81,15 +81,14 @@ puts "INDICES #{current_indices.inspect}"
 
     def find_vertices( key, value, page:nil, per_page:nil )
       params = { key: key, value: value }.merge page_params( page, per_page )
-
       res    = get( u(:vertices), params: params )
       res.map do |res|
         Vertex.from_hash( self, res )
       end
     end
 
-    def find_vertex( key: key, value: value )
-      Vertex.from_hash( self, get( u %W[vertices], params: {key: key, value: value} ).first )
+    def find_vertex( key, value )
+      find_vertices( key, value ).first
     end
 
     def get_vertex( id )

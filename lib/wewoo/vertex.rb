@@ -17,6 +17,10 @@ module Wewoo
       self.id == other.id and self.properties == other.properties
     end
 
+    def destroy
+      graph.remove_vertex( id )
+    end
+
     def to_s
      "v(#{self.id})"
     end

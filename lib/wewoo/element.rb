@@ -5,6 +5,10 @@ module Wewoo
 
     alias :props :properties
 
+    def gid
+      props.gid
+    end
+
     private
 
     def initialize( graph, id, properties )

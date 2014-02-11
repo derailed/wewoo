@@ -26,6 +26,10 @@ module Wewoo
     end
     alias :inspect :to_s
 
+    def destroy
+      graph.remove_edge( id )
+    end
+
     private
 
     def self.from_hash( graph, hash )
