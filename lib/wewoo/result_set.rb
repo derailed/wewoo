@@ -2,8 +2,9 @@
 module Wewoo
   class ResultSet
 
-    def initialize( results )
+    def initialize( graph, results )
       @results = results
+      @graph   = graph
     end
 
     def graph_element?( item )
@@ -13,7 +14,7 @@ module Wewoo
     def build_element( item )
       type = item['_type']
       Object.const_get( "Wewoo::#{type.capitalize}" )
-            .from_hash( self, item )
+            .from_hash( @graph, item )
     end
 
     def hydrate

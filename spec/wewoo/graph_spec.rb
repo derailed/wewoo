@@ -4,12 +4,7 @@ module Wewoo
   describe Graph do
     let(:g) { Graph.new( :test_graph ) }
 
-    context "Connection" do
-#      pending 'reports some stats on inspect' do
-        #g.clear
-        #expect( g.to_s ).to eq 'test_graph [Vertices:0, Edges:0]'
-      #end
-
+    context "Graphs" do
       it "show all available graphs" do
         expect( Graph.available_graphs ).to_not be_empty
       end
@@ -58,12 +53,17 @@ module Wewoo
       end
     end
 
-    context 'Vertices' do
+    context 'Vertex' do
       before :each do
         g.clear
       end
 
       let!(:v1) { g.add_vertex( name:'fred', age:20 ) }
+
+      it 'checks for vertex existance correctly' do
+        expect( g.vertex_exists?( v1.id ) ).to eq true
+        expect( g.vertex_exists?( 1234 ) ).to  eq false
+      end
 
       it 'creates a vertex correctly' do
         vertices = g.V
@@ -187,7 +187,7 @@ module Wewoo
       end
     end
 
-    context 'Edges' do
+    context 'Edge' do
       before :each do
         g.clear
       end
@@ -197,6 +197,11 @@ module Wewoo
       let!(:e1) { g.add_edge( v1.id, v2.id, :friend,
                               group: :derailed,
                               city: :denver ) }
+
+      it 'checks for edge existance correctly' do
+        expect( g.edge_exists?( e1.id ) ).to eq true
+        expect( g.edge_exists?( 1234 ) ).to  eq false
+      end
 
       it 'creates an edge correctly' do
         expect( g.E ).to have(1).item

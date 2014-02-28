@@ -53,7 +53,7 @@ puts "INDICES #{current_indices.inspect}"
     end
 
     def query( command, page:nil, per_page:nil )
-      ResultSet.new( get( u(%w[tp gremlin]),
+      ResultSet.new( self, get( u(%w[tp gremlin]),
            params:{script: command}.merge(page_params(page, per_page)),
            headers: { 'Content-Type'=> 'application/json'} ) ).hydrate
     end
@@ -99,14 +99,13 @@ puts "INDICES #{current_indices.inspect}"
     alias :v :get_vertex
 
     def vertex_exists?( id )
-      v(id)
-      true
+      v(id) && true
     rescue
       false
     end
 
     def edge_exists?( id )
-      e(id)
+      e(id) && true
       true
     rescue
       false
