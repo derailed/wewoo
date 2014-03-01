@@ -3,7 +3,7 @@ require 'support/graph_sets'
 
 module Wewoo
   describe ResultSet do
-    let!(:g) { Graph.new( :test_graph ) }
+    let(:g) { Graph.new( :test_graph ) }
 
     before :each do
       build_sample_graph( g )

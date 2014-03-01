@@ -18,12 +18,10 @@ module Wewoo
     end
 
     def to_props( properties )
-      props = {}
-      properties.each_pair do |k,v|
-        value = ((v.is_a? Hash and v.has_key? 'type') ? v['value'] : v)
-        props[k] = value
-      end
-      Map( props )
+      properties.delete( '_type' )
+      Map[Hash[properties.map { |k,v|
+        [k, ((v.is_a? Hash and v.has_key? 'type') ? v['value'] : v)]
+      }]]
     end
   end
 end

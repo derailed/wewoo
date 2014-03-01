@@ -33,13 +33,11 @@ module Wewoo
     private
 
     def self.from_hash( graph, hash )
-      hash.delete( '_type' )
-
-      id      = hash.delete( '_id' )
-      from_id = hash.delete( '_outV' )
-      to_id   = hash.delete( '_inV' )
-
-      Edge.new( graph, id, from_id, to_id, hash.delete('_label'), hash )
+      new( graph,
+           hash.delete( '_id' ),
+           hash.delete( '_outV' ),
+           hash.delete( '_inV' ),
+           hash.delete('_label'), hash )
     end
 
     def initialize( graph, id, from_id, to_id, label, properties )

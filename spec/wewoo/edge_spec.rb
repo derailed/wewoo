@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Wewoo
   describe Vertex do
-    let(:g) { Graph.new(:test_graph) }
     before :all do
-      build_test_graph( g )
+      @g = Graph.new(:test_graph)
+      build_test_graph( @g )
     end
 
     context 'equality' do
@@ -33,10 +33,10 @@ module Wewoo
       end
 
       it 'deletes an edge correctly' do
-        before = g.E.count()
+        before = @g.E.count()
         @e1.destroy
 
-        expect( g.E.count() ).to eq before-1
+        expect( @g.E.count() ).to eq before-1
       end
     end
   end

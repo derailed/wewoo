@@ -3,18 +3,16 @@ module Wewoo
   class Vertex < Wewoo::Element
     include Adapter
 
-    class InvalidDirectionError < RuntimeError; end
+    def outE ( *labels ); @outE  || get_edges( :outE , labels ); end
+    def inE  ( *labels ); @inE   || get_edges( :inE  , labels ); end
+    def bothE( *labels ); @bothE || get_edges( :bothE, labels ); end
 
-    def outE ( *labels ); get_edges( :out , labels ); end
-    def inE  ( *labels ); get_edges( :in  , labels ); end
-    def bothE( *labels ); get_edges( :both, labels ); end
-
-    def out ( *labels ); get_vertices( :out , labels ); end
-    def in  ( *labels ); get_vertices( :in  , labels ); end
-    def both( *labels ); get_vertices( :both, labels ); end
+    def out ( *labels ); @out  || get_vertices( :out , labels ); end
+    def in  ( *labels ); @in   || get_vertices( :in  , labels ); end
+    def both( *labels ); @both || get_vertices( :both, labels ); end
 
     def ==( other )
-      self.id == other.id and self.properties == other.properties
+      self.id == other.id and self.props == other.props
     end
 
     def destroy
@@ -34,7 +32,7 @@ module Wewoo
 
     def get_edges( direction, labels )
       str_labels = labels ? labels.map(&:to_s) : []
-      get( u(map_direction(direction,true)) ).map { |hash|
+      get( u direction ).map { |hash|
         if labels.empty? or str_labels.include? hash['_label']
           Edge.from_hash( graph, hash )
         end
@@ -42,7 +40,7 @@ module Wewoo
     end
 
     def get_vertices( direction, labels=[] )
-      get_edges(direction,labels).map{ |e|
+      get_edges( "#{direction}E",labels ).map{ |e|
         if direction == :both
           e.in == self ? e.out : e.in
         else
@@ -58,11 +56,6 @@ module Wewoo
 
     def u( path )
       File.join( graph.url, %W[vertices #{id} #{path}] )
-    end
-
-    def map_direction( direction, edge=nil )
-      raise InvalidDirectionError unless %w[in out both].include? direction.to_s
-      direction.to_s + (edge ? "E" : "" )
     end
   end
 end

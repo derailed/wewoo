@@ -63,7 +63,10 @@ module Wewoo
       update_vertex( vertex.id, props )
     end
 
+    # BOZO!! - not really an update as all props will be replaced!
     def update_vertex( id, props )
+      v = find_vertex( id )
+      props = v.props.merge( props )
       res = put( u( %W[vertices #{id}] ),
             body:    props.to_json,
             headers: { 'Content-Type'=> 'application/json'} )
@@ -116,6 +119,9 @@ module Wewoo
     end
 
     def update_edge( id, props )
+      e     = find_edge( id )
+      props = e.props.merge( props )
+
       res = put( u( %W[edges #{id}] ),
             body: props.to_json,
             headers: { 'Content-Type'=> 'application/json'} )
@@ -146,8 +152,14 @@ module Wewoo
     alias :e :find_edge
 
     def find_edges( key, value, page:nil, per_page:nil )
-      params = { key: key, value: value }.merge page_params( page, per_page )
+      params = { key: key,
+                 value: map_value( value )
+      }.merge page_params( page, per_page )
       get( u(:edges), params: params ).map { |e| Edge.from_hash( self, e ) }
+    end
+
+    def find_first_edge( key, value )
+      find_edges( key, value, page:1, per_page:1 ).first
     end
 
     def edges( page:nil, per_page:nil )
