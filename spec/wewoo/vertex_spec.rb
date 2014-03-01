@@ -1,20 +1,20 @@
 require 'spec_helper'
 
 module Wewoo
-  describe Edge do
-    let(:graph ) { Graph.new( :test_graph ) }
+  describe Vertex do
+    let(:g) { Graph.new( :test_graph ) }
 
     before :each do
-      graph.clear
+      g.clear
     end
 
     context 'connections' do
-      let!(:v1)   { graph.add_vertex( name: :fred, age:10 ) }
-      let!(:v2)   { graph.add_vertex( name: :blee, age:20 ) }
-      let!(:v3)   { graph.add_vertex( name: :bob , age:30 ) }
-      let!(:e1_2) { graph.add_edge( v1, v2, :friend ) }
-      let!(:e1_3) { graph.add_edge( v1, v3, :bobo   ) }
-      let!(:e2_3) { graph.add_edge( v2, v3, :zob    ) }
+      let!(:v1)   { g.add_vertex( name: :fred, age:10 ) }
+      let!(:v2)   { g.add_vertex( name: :blee, age:20 ) }
+      let!(:v3)   { g.add_vertex( name: :bob , age:30 ) }
+      let!(:e1_2) { g.add_edge( v1, v2, :friend ) }
+      let!(:e1_3) { g.add_edge( v1, v3, :bobo   ) }
+      let!(:e2_3) { g.add_edge( v2, v3, :zob    ) }
 
       context "edges" do
         it "fetches out edges correctly" do
@@ -65,6 +65,16 @@ module Wewoo
         it "fetches all vertex correctly" do
           expect( v2.both ).to       eq [v1,v3]
           expect( v2.both(:zob) ).to eq [v3]
+        end
+
+
+        it "Deletes a vertex correctly" do
+          t_v = g.V.count
+          t_e = g.E.count
+          v1.destroy
+
+          expect( g.V.count ).to eq t_v-1
+          expect( g.E.count ).to eq t_e-2
         end
       end
     end

@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Wewoo
   describe Vertex do
+    let(:g) { Graph.new(:test_graph) }
     before :all do
-      @g = Graph.new(:test_graph)
-      build_test_graph( @g )
+      build_test_graph( g )
     end
 
     context 'equality' do
@@ -30,6 +30,13 @@ module Wewoo
 
       it "fetches edge tail correctly" do
         expect( @e1.out ).to eq @v1
+      end
+
+      it 'deletes an edge correctly' do
+        before = g.E.count()
+        @e1.destroy
+
+        expect( g.E.count() ).to eq before-1
       end
     end
   end
