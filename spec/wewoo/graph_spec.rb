@@ -124,37 +124,45 @@ module Wewoo
         end
       end
 
-      context 'find' do
+      context 'finders' do
         before :each do
           g.clear
           build_test_graph( g )
         end
 
-        it 'finds a node by id correctly' do
-          vertex = g.get_vertex( @v1.id )
-
-          expect( vertex ).to_not be_nil
-          expect( vertex ).to eq  @v1
+        it 'finds a vertex by id correctly' do
+          expect( g.find_vertex( @v1.id ) ).to eq @v1
         end
 
-        it 'finds a node by properties correctly' do
-          candidates = g.find_vertices( :name, :fred )
+        it 'finds a vertex by gid correctly' do
+          expect( g.find_vertex_by_gid( @v1.gid ) ).to eq @v1
+        end
 
-          expect( candidates ).to_not   be_nil
-          expect( candidates.first ).to eq @v1
+        it 'finds the first vertex matching a prop' do
+          expect( g.find_first_vertex( :name, 'fred' ) ).to eq @v1
+        end
+
+        it 'finds the first vertex matching a an int prop' do
+          expect( g.find_first_vertex( :age, 30 ) ).to eq @v2
+        end
+
+        it 'finds the first vertex matching a a float prop' do
+          expect( g.find_first_vertex( :rating, 5.5 ) ).to eq @v4
+        end
+
+        it 'finds the first vertex matching a boolean prop' do
+          expect( g.find_first_vertex( :busy, false ) ).to eq @v2
         end
       end
 
-      context 'find' do
+      context 'CRud' do
         before :each do
           g.clear
         end
 
         it 'updates a node correctly' do
-          g.add_vertex( age:18 )
-
-          expect( g.vertices ).to have(1).item
-          expect( g.vertices.first.properties.age ).to eq 18
+          v = g.add_vertex( age:18 )
+          expect( g.find_vertex( v.id ).props.age ).to eq v.props.age
         end
 
         it 'deletes a node correctly' do
@@ -232,7 +240,7 @@ module Wewoo
 
       context 'find' do
         it 'find an edge by id correctly' do
-         edge = g.get_edge( e1.id )
+         edge = g.find_edge( e1.id )
 
          expect( edge ).to eq e1
         end

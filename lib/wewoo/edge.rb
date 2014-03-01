@@ -7,16 +7,16 @@ module Wewoo
     attr_accessor :label, :from_id, :to_id
 
     def ==( other )
-      self.id         == other.id and
-      self.from_id    == other.from_id and
-      self.to_id      == other.to_id and
-      self.label      == other.label and
-      self.properties == other.properties
+      self.id      == other.id and
+      self.from_id == other.from_id and
+      self.to_id   == other.to_id and
+      self.label   == other.label and
+      self.props   == other.props
     end
 
     def get_vertex( direction )
       id = (direction == :in ? to_id : from_id)
-      graph.get_vertex( id )
+      graph.find_vertex( id )
     end
     def in;  @in  || get_vertex(:in); end
     def out; @out || get_vertex(:out); end

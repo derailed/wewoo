@@ -41,9 +41,7 @@ module Wewoo
     end
 
     def ensure_index( key, type=:vertex )
-      current_indices = key_indices
-puts "INDICES #{current_indices.inspect}"
-      unless current_indices[type.to_s].include? key.to_s
+      unless key_indices[type.to_s].include? key.to_s
         post( u( %W[keyindices #{type} #{key}] ) )
       end
     end
@@ -80,23 +78,25 @@ puts "INDICES #{current_indices.inspect}"
     alias :V :vertices
 
     def find_vertices( key, value, page:nil, per_page:nil )
-      params = { key: key, value: value }.merge page_params( page, per_page )
-      res    = get( u(:vertices), params: params )
+      params = { key: key, value: map_value(value) }.merge page_params( page, per_page )
+      res    = get( u(:vertices), params:  params )
+
       res.map do |res|
         Vertex.from_hash( self, res )
       end
     end
-
-    def find_vertex( key, value )
+    def find_first_vertex( key, value )
       find_vertices( key, value ).first
     end
-
-    def get_vertex( id )
-     Vertex.from_hash( self, get( u %W[vertices #{id}] ) )
+    def find_vertex_by_gid( gid )
+      find_first_vertex( :gid, gid )
+    end
+    def find_vertex( id )
+      Vertex.from_hash( self, get( u %W[vertices #{id}] ) )
     rescue InvalidRequestError => ex
       raise GraphElementNotFoundError, ex.message
     end
-    alias :v :get_vertex
+    alias :v :find_vertex
 
     def vertex_exists?( id )
       v(id) && true
@@ -138,12 +138,12 @@ puts "INDICES #{current_indices.inspect}"
       delete( u %W[edges #{id}] )
     end
 
-    def get_edge( id )
+    def find_edge( id )
       Edge.from_hash( self, get( u %W[edges #{id}] ) )
     rescue InvalidRequestError => ex
       raise GraphElementNotFoundError, ex.message
     end
-    alias :e :get_edge
+    alias :e :find_edge
 
     def find_edges( key, value, page:nil, per_page:nil )
       params = { key: key, value: value }.merge page_params( page, per_page )
@@ -167,6 +167,20 @@ puts "INDICES #{current_indices.inspect}"
     alias inspect to_s
 
     private
+
+    def map_value( value )
+      case value
+        when TrueClass
+        when FalseClass
+          "(b,#{value})"
+        when Fixnum
+          "(i,#{value})"
+        when Float
+          "(d,#{value})"
+      else
+        value
+      end
+    end
 
     def u( path )
       File.join( url, ((path.is_a? Array) ? path : path.to_s ) )

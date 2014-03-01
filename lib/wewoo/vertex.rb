@@ -26,6 +26,10 @@ module Wewoo
     end
     alias :inspect :to_s
 
+    def dump
+      props.clone().merge( id: id )
+    end
+
     private
 
     def get_edges( direction, labels )

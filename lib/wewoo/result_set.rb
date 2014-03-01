@@ -2,29 +2,35 @@
 module Wewoo
   class ResultSet
 
+    class NoGraphElementError < RuntimeError; end
+
     def initialize( graph, results )
       @results = results
       @graph   = graph
     end
 
     def graph_element?( item )
-      item.is_a? Hash and item.key?('_type')
+      item.is_a? Hash    and
+      item.key?('_type') and
+      %w(vertex edge).include? item['_type']
     end
 
     def build_element( item )
       type = item['_type']
       Object.const_get( "Wewoo::#{type.capitalize}" )
             .from_hash( @graph, item )
+    rescue => boom
+      raise NoGraphElementError, "Unbuildable"
     end
 
     def hydrate
       return @results if @results.is_a? Hash
 
-      if @results.is_a? Array and @results.size == 1
-        @results = @results.first
-      end
-
-      return build_element( @results ) if graph_element? @results
+      # if @results.is_a? Array and @results.size == 1
+      #   @results = @results.first
+      # end
+      #
+      # return build_element( @results ) if graph_element? @results
 
       return_type = nil
       out = @results.map do |r|
@@ -33,8 +39,7 @@ module Wewoo
         elsif r.is_a? Hash
           return_type = :hash
           r.map do |k,v|
-            obj = build_element( v )
-            {k => obj}
+            {k => build_element(v)}
           end
         elsif r.is_a? Array and r.last.is_a? Hash and
               r.last.key?('_value') and r.last.key?('_key')

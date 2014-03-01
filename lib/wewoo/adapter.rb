@@ -50,9 +50,8 @@ module Wewoo
       end
 
       body = JSON.parse( resp.body )
-
       results = body['results'] || body
-      results.is_a?(Hash) ? Map( results ) : results
+      results.is_a?(Hash) ? Map[results] : results
     end
   end
 end

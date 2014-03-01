@@ -1,10 +1,10 @@
 def build_test_graph( g )
   g.clear
 
-  @v1 = g.add_vertex( name:'fred', age:20 )
-  @v2 = g.add_vertex( name:'joe' , age:30 )
-  @v3 = g.add_vertex( name:'max' , age:40 )
-  @v4 = g.add_vertex( name:'blee', age:50 )
+  @v1 = g.add_vertex( gid: 1  , name:'fred', age:20, rating: 30.5, busy: true )
+  @v2 = g.add_vertex( gid: 2  , name:'joe' , age:30, rating: 20.5, busy: false )
+  @v3 = g.add_vertex( gid: 3  , name:'max' , age:40, rating: 10.5, busy: true )
+  @v4 = g.add_vertex( gid: "4", name:'blee', age:50, rating: 5.5 , busy: true )
 
   @e1 = g.add_edge( @v1, @v2, :friend )
   @e2 = g.add_edge( @v1, @v3, :friend )
