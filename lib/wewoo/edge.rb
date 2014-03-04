@@ -7,8 +7,7 @@ module Wewoo
     attr_accessor :label, :from_id, :to_id
 
     def ==( other )
-      return false unless other.is_a? Edge
-
+      self.class   == other.class and
       self.id      == other.id and
       self.from_id == other.from_id and
       self.to_id   == other.to_id and

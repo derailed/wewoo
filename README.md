@@ -130,6 +130,9 @@ g.find_first_vertex( :gid, 1234 ) #=> [v(567)]
 g.find_vertex( 456 ) #=> [v(456)]
 # or...
 g.v( 456 )           #=> [v(456)]
+
+# Paging support...
+g.find_vertices( 'enabled', true, 1, 2 ) #=> [v(7890), v(7891)]
 ```
 
 Wewoo also allows you to use the full gremlin query api using the Wewoo::Graph#query
@@ -146,7 +149,12 @@ g.q( "g.E.has( 'weight', T.lt, 0.5f)" ) #=> [e(1xSj-tve-2W) [113412-friend-11341
 
 ## Releases
 
-0.1.5 Initial drop
+0.1.0 Initial drop
+0.1.1 Disable user defined IDs as most graphs disallow
+0.1.2 Bug fixes and spec updates
+0.1.3 Spec'ed out Gremlin API
+0.1.4 Refactor graph elements
+0.1.5 Beef up specs + README
 
 ## Contributing
 

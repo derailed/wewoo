@@ -231,5 +231,35 @@ module Wewoo
         end
       end
     end
+
+    context 'load/save' do
+      it 'saves a graph correctly' do
+        expect( @g.save( '/tmp/test_graph.xml' ) ).to       be_true
+        expect( File.exists?( '/tmp/test_graph.xml' ) ).to  be_true
+      end
+
+      it 'create sub dirs if necessary before save' do
+        expect( @g.save( '/tmp/graphs/test_graph.xml' ) ).to      be_true
+        expect( File.exists?( '/tmp/graphs/test_graph.xml' ) ).to be_true
+      end
+
+      it 'loads a graph correctly' do
+        b_count = @g.V.count
+
+        expect( @g.load( '/tmp/test_graph.xml') ).to be_true
+        expect( @g.V.count ).to eq b_count
+      end
+
+      it 'appends a graph correctly' do
+        b_count = @g.V.count
+
+        expect( @g.load( '/tmp/test_graph.xml', append:true) ).to be_true
+        expect( @g.V.count ).to eq 2*b_count
+      end
+
+      it 'raise exeption if not graphs' do
+        expect{ @g.load( '/tmp/test_graphico.xml')}.to raise_error
+      end
+    end
   end
 end

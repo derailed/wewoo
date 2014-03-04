@@ -24,6 +24,20 @@ module Wewoo
       validate
     end
 
+    def save( filename )
+      dir = File.dirname( filename )
+      FileUtils.mkdir_p( dir ) unless File.exists?( dir )
+
+      q( "g.saveGraphML( '#{filename}' )" )
+    end
+
+    def load( filename, append:false )
+      raise "Graph file does not exist. #{filename}" unless File.exists?(filename)
+
+      clear unless append
+      q( "g.loadGraphML( '#{filename}' )" )
+    end
+
     def clear
       query( 'g.V.remove()')
     end
