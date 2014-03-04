@@ -17,8 +17,10 @@ module Wewoo
       res.graphs
     end
 
-    def initialize( name )
-      @name = name
+    def initialize( graph_name, host:nil, port:nil )
+      Configuration.url( host, port )
+
+      @name     = graph_name
       @base_url = "#{Configuration.url}/graphs"
       @url      = "#{@base_url}/#{@name}"
       validate
