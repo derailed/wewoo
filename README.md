@@ -21,7 +21,7 @@ $ bundle
 Or install it yourself as:
 
 ```
-    $ gem install wewoo
+$ gem install wewoo
 ```
 
 ## Usage
@@ -58,12 +58,12 @@ g.E # => [e(1lIN-oJG-4K) [95088-created-95076], e(1lIJ-oJy-4K) [95080-created-95
 
 ### Adding A Vertex
 
-Some graph database allow or disallow setting an id on a vertex. Wewoo errs on
+Most graph database don't allow setting an id on a graph element. Wewoo errs on
 letting the graph implementation assign an internal id. It is usually considered
 good practice to keep vertex properties to a minimum. Wewoo provides a special
 property :gid to integrate the graph element with another data source.
-Gid can represent a foreign key to another database. To be most efficient,
-a gid must be unique. If not set the gid will refer to the underlying graph
+You can leverage :gid to represent a foreign key to another store. Hence :gid must
+be unique. If not set the gid will refer to the underlying graph
 implementation id.
 
 ```ruby
@@ -117,15 +117,6 @@ g.v( 1234 ).in  #=> [v(7890), v(7891)]
 # Find all vertices directly connected to vertex 1234
 g.v( 1234 ).both #=> [v(7890), v(7891), v(4567)]
 
-# Find all outbound edges from vertex 1234
-g.v( 1234 ).outE #=> [e(1lIJ-oJy-4K) [95080-created-95084]]
-
-# Find all inbound edges to vertex 1234
-g.v( 1234 ).inE  #=> []
-
-# Find all edges connected to vertex 1234
-g.v( 1234 ).bothE #=> [e(1lIJ-oJy-4K) [95080-created-95084]]
-
 # Find all edges connected to vertex 1234 with labels fred or created
 g.v(1234).bothE( :fred, :created) #=> [e(1lIJ-oJy-4K) [95080-created-95084]]
 
@@ -139,15 +130,23 @@ g.find_first_vertex( :gid, 1234 ) #=> [v(567)]
 g.find_vertex( 456 ) #=> [v(456)]
 # or...
 g.v( 456 )           #=> [v(456)]
-
-
 ```
 
+Wewoo also allows you to use the full gremlin query api using the Wewoo::Graph#query
+method. Wewoo does its best to construct graph elements objects with the returning
+results.
+
+```ruby
+# Find all vertices who's name is fred
+g.query( "g.V.out.groupCount.cap") #=> {v(113420)=>2, v(113416)=>2, v(113412)=>1}
+
+# Find all edge with weight < 0.5
+g.q( "g.E.has( 'weight', T.lt, 0.5f)" ) #=> [e(1xSj-tve-2W) [113412-friend-113416]]
+```
 
 ## Releases
 
-0.0.1 Initial drop
-0.0.2 Enable user specified ids
+0.1.5 Initial drop
 
 ## Contributing
 
@@ -156,3 +155,7 @@ g.v( 456 )           #=> [v(456)]
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## License
+
+ Wewoo is released under the [MIT](http://opensource.org/licenses/MIT) license.

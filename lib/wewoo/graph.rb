@@ -51,6 +51,7 @@ module Wewoo
     end
 
     def query( command, page:nil, per_page:nil )
+      # command = "g." + command unless command[/\Ag\./]
       ResultSet.new( self, get( u(%w[tp gremlin]),
            params:{script: command}.merge(page_params(page, per_page)),
            headers: { 'Content-Type'=> 'application/json'} ) ).hydrate
