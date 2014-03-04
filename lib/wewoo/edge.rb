@@ -7,12 +7,16 @@ module Wewoo
     attr_accessor :label, :from_id, :to_id
 
     def ==( other )
+      return false unless other.is_a? Edge
+
       self.id      == other.id and
       self.from_id == other.from_id and
       self.to_id   == other.to_id and
       self.label   == other.label and
       self.props   == other.props
     end
+    alias :eql? :==
+    def hash; id; end
 
     def get_vertex( direction )
       id = (direction == :in ? to_id : from_id)

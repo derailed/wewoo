@@ -11,9 +11,12 @@ module Wewoo
     def in  ( *labels ); @in   || get_vertices( :in  , labels ); end
     def both( *labels ); @both || get_vertices( :both, labels ); end
 
-    def ==( other )
-      self.id == other.id and self.props == other.props
+    def ==( o )
+      self.class == o.class and self.id == o.id and self.props == o.props
     end
+    alias :eql? :==
+    def hash; id; end
+    def <=>(o); self.class == o.class ? self.id <=> o.id : super; end
 
     def destroy
       graph.remove_vertex( id )
@@ -50,8 +53,7 @@ module Wewoo
     end
 
     def self.from_hash( graph, hash )
-      hash.delete( '_type' )
-      Vertex.new( graph, hash.delete('_id'), Map( hash ) )
+      new( graph, hash.delete('_id'), Map( hash ) )
     end
 
     def u( path )

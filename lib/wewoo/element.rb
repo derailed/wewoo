@@ -12,9 +12,10 @@ module Wewoo
     private
 
     def initialize( graph, id, properties )
-      @graph      = graph
-      @id         = id
-      @properties = to_props( properties )
+      @graph            = graph
+      @id               = id
+      @properties       = to_props( properties )
+      @properties[:gid] = id unless props[:gid]
     end
 
     def to_props( properties )

@@ -9,6 +9,10 @@ module Wewoo
       @graph   = graph
     end
 
+    def hydrate
+      collapse( _hydrate( @results ) )
+    end
+
     def graph_element?( item )
       item.is_a? Hash    and
       item.key?('_type') and
@@ -23,47 +27,73 @@ module Wewoo
       raise NoGraphElementError, "Unbuildable"
     end
 
-    def hydrate
-      return @results if @results.is_a? Hash
+    private
 
-      # if @results.is_a? Array and @results.size == 1
-      #   @results = @results.first
-      # end
-      #
-      # return build_element( @results ) if graph_element? @results
+    def collapse( res )
+      (res.is_a? Enumerable and
+       res.count == 1 and
+       res.first.is_a? Enumerable) ? res.first : res
+    end
 
-      return_type = nil
-      out = @results.map do |r|
-        if graph_element? r
-          build_element( r )
-        elsif r.is_a? Hash
-          return_type = :hash
-          r.map do |k,v|
-            {k => build_element(v)}
-          end
-        elsif r.is_a? Array and r.last.is_a? Hash and
-              r.last.key?('_value') and r.last.key?('_key')
-          element = r.last
-          obj = build_element( element['_key'] )
-          return_type = :hash
-          [obj, element['_value']]
-        elsif r.is_a? Array
-          r.map{ |item|
-            if graph_element? item
-              build_element( item )
-            else
-              item
-            end
-          }
-        else
-          r
+    def usable( item )
+      graph_element?( item ) ? build_element( item ) : item
+    end
+
+    def value_hash?( hash )
+      hash.values.first.is_a? Hash
+    end
+
+    def simple_response?( res )
+      res.is_a? Hash and res.key?('success')
+    end
+
+    def key_value_hash?( res )
+      res.is_a? Hash and res.key?('_key') and res.key?('_value')
+    end
+
+    def _deep_hydrate( item, acc )
+      if graph_element?( item )
+        acc << build_element( item )
+      elsif item.is_a? Array
+        tuples = []
+        item.each do |row|
+          _deep_hydrate( row, tuples )
         end
+        acc << tuples
+      elsif item.is_a? Hash
+        if key_value_hash?( item )
+          key = usable(item['_key'])
+          if item['_value'].is_a? Enumerable
+            acc[key] = []
+            item['_value'].each do |row|
+              acc[key] << usable(row)
+            end
+          else
+            acc[key] = usable(item['_value'])
+          end
+        elsif item.values.first.is_a? Hash
+          res = {}
+          item.values.each do |item|
+            _deep_hydrate( item, res )
+          end
+          acc << res
+        else
+          acc << item
+        end
+      else
+        acc << item
       end
-     return_type == :hash ? Hash[*out.flatten] : out
-    rescue => boom
-      #puts boom
-      #boom.backtrace.each{ |l| puts l }
-      @results
+    end
+
+    def _hydrate( res )
+      return res['success'] if simple_response?( res )
+      if res.is_a? Array
+        acc = []
+        res.each{ |row| _deep_hydrate( row, acc ) }
+        acc
+      else
+        raise "Unexpected match!!"
+      end
     end
   end
 end

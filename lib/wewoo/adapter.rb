@@ -25,10 +25,10 @@ module Wewoo
       handle_response( Typhoeus.delete( url, opts ) )
     end
 
-    def log( message )
+    def log( title, message )
       return unless Configuration.debug
 
-      msg = "[Wewoo] #{message}"
+      msg = "[Wewoo] #{title} -- #{message}"
       if Object.const_defined? :Rails
         Rails.logger.info msg
       else
@@ -37,7 +37,7 @@ module Wewoo
     end
 
     def handle_response( resp )
-      log "URL: #{resp.effective_url}"
+      log "URL", resp.effective_url
 
       unless resp.success?
         error = "-- " + JSON.parse( resp.response_body )['message'] rescue ""
@@ -50,6 +50,7 @@ module Wewoo
       end
 
       body = JSON.parse( resp.body )
+      log "RESP", body
       results = body['results'] || body
       results.is_a?(Hash) ? Map[results] : results
     end
