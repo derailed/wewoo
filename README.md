@@ -33,7 +33,7 @@ graph database using Ruby a joy.
 $ wewoo
 ```
 
-### Connecting to an existing graph database
+### Connecting to a graph
 
 Dependending on your Rexster configuration, you will need to specify the
 host and port to tell Wewoo how to connect. The default url is localhost:8182.
@@ -56,7 +56,7 @@ g.V # => [v(95084), v(95072), v(95076), v(95088), v(95080)]
 g.E # => [e(1lIN-oJG-4K) [95088-created-95076], e(1lIJ-oJy-4K) [95080-created-95084]]
 ```
 
-### Adding A Vertex
+### Adding a vertex
 
 Most graph database don't allow setting an id on a graph element. Wewoo errs on
 letting the graph implementation assign an internal id. It is usually considered
@@ -74,7 +74,7 @@ v.props     #=> {name: 'Fred', age: 20, active: true}
 v.props.age #=> 20
 ```
 
-### Adding An Edge
+### Adding an edge
 
 ```ruby
 v1 = g.add_vertex( name: 'Fred' )
@@ -85,7 +85,7 @@ e.gid   #=> 1234
 e.props #=> {"timestamp"=>"2014-03-01 13:55:26 -0700"}
 ```
 
-### Deleting Graph Elements
+### Deleting elements
 
 Wewoo provides two way to delete a graph element. If you have a handle on the
 instance, you can call destroy on it directly. If not you can remove an element
@@ -95,11 +95,18 @@ NOTE: By virtue of a graph database, when deleting a vertex, all associated
 edges will be deleted.
 
 ```ruby
+# Delete edge with id 1234
 g.e( 1234 ).destroy
+# or ...
+g.remove_edge( 1234 )
+
+# Delete a vertex with id 5678
 g.v( 5678 ).destroy
 # or...
 g.remove_vertex( 5678 )
-g.remove_edge( 1234 )
+
+# Clear out the graph
+g.clear
 ```
 
 ### Traversing A Graph
