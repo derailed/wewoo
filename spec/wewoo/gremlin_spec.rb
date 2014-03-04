@@ -227,10 +227,10 @@ module Wewoo
         expect( @g.q( script ).sort ).to eq [0.5, 1.0]
       end
 
-      # NYI?? Titan??
-      pending 'HasNot' do
-        script = "g.v(#{@v1.id}).outE.hasNot('weight', T.eq, 0.5f).weight"
-        expect( @g.q( script ).sort ).to eq [0.4, 1.0]
+      # BOZO !! No support for full filter ??
+      it 'HasNot' do
+        script = "g.v(#{@v1.id}).outE.hasNot('name', 'marko').weight"
+        expect( @g.q( script ).sort ).to eq [0.4, 0.5, 1.0]
       end
 
       it 'Interval' do
@@ -271,7 +271,6 @@ module Wewoo
         expect( @g.q( script ).sort ).to eq [29]
       end
 
-
       it 'GroupBy' do
         exp = {
           @v1 => [@v2, @v4, @v3],
@@ -286,7 +285,6 @@ module Wewoo
         }
       end
 
-      # BOZO !! Review
       it 'GroupCount' do
         exp = {
           @v2 => 1,
@@ -294,8 +292,8 @@ module Wewoo
           @v3 => 3,
           @v5 => 1
         }
-        script = "x=[:];g.V.out.groupCount(x).cap"
-        expect( @g.q( script ).sort ).to have(4).items
+        q = "x=[:];g.V.out.groupCount(x).cap"
+        @g.q( q ).each_pair { |k,v| expect( v ).to eq exp[k] }
       end
 
       it 'Optional' do
@@ -413,12 +411,12 @@ module Wewoo
 
       it 'Iterate' do
         q = "g.V.sideEffect{it.name='same'}.iterate();g.V.name"
-        expect( @g.q(q) ).to eq %w[same same same same same same]
+        expect( @g.q(q) ).to eq %w[same]*6
       end
 
-      pending 'Next' do
+      it 'Next' do
         q = "g.V.sideEffect{it.name='same'}.next(3);g.V.name"
-        expect( @g.q(q) ).to eq %w[same same same same same same]
+        expect( @g.q(q) ).to eq %w[same]*6
       end
 
       it 'Save' do
