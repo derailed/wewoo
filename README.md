@@ -37,17 +37,17 @@ $ wewoo
 
 Dependending on your Rexster configuration, you will need to specify the
 host and port to tell Wewoo how to connect. The default url is localhost:8182.
-You may also choose to set the configuration in a shell environment variable
+You may optionaly choose to set the configuration in a shell environment variable
 WEWOO_URL ie WEWOO_URL='http://localhost:8185'
 
 ```ruby
-Wewoo::Configuration.url( 'http://localhost:8182' )
-
 # List out all available graphs
 Wewoo::Graph.available_graphs #=> ["test_graph", "my_awesome_graph"]
 
-# Connect to an existing graph
+# Connect to an existing graph on localhost:8182
 g = Wewoo::Graph.new( :my_awesome_graph )
+# or...
+g = Wewoo::Graph.new( :my_awesome_graph, 'localhost', 9000 )
 
 # List out all vertices
 g.V # => [v(95084), v(95072), v(95076), v(95088), v(95080)]
