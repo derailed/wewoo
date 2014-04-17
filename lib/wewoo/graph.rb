@@ -112,6 +112,7 @@ module Wewoo
       find_first_vertex( :gid, gid )
     end
     def find_vertex( id )
+      raise "You must provide a valid vertex id" unless id
       Vertex.from_hash( self, get( u %W[vertices #{id}] ) )
     rescue InvalidRequestError => ex
       raise GraphElementNotFoundError, ex.message
@@ -162,6 +163,7 @@ module Wewoo
     end
 
     def find_edge( id )
+      raise "You must provide a valid edge id" unless id
       Edge.from_hash( self, get( u %W[edges #{id}] ) )
     rescue InvalidRequestError => ex
       raise GraphElementNotFoundError, ex.message
@@ -185,15 +187,6 @@ module Wewoo
       end
     end
     alias :E :edges
-
-    def to_s
-      res = get( url, headers: { 'Content-Type' =>
-                                 'application/vnd.rexster-typed-v1+json' } )
-      stats = res.graph.match( /.*\[vertices:(\d+) edges:(\d+)\]/ ).captures
-
-      "#{name} [Vertices:#{stats.first}, Edges:#{stats.last}]"
-    end
-    alias inspect to_s
 
     private
 

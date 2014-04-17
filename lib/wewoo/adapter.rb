@@ -29,11 +29,7 @@ module Wewoo
       return unless Configuration.debug
 
       msg = "[Wewoo] #{title} -- #{message}"
-      if Object.const_defined? :Rails
-        Rails.logger.info msg
-      else
-        puts msg
-      end
+      logger.debug msg
     end
 
     def handle_response( resp )
@@ -53,6 +49,10 @@ module Wewoo
       log "RESP", body
       results = body['results'] || body
       results.is_a?(Hash) ? Map[results] : results
+    end
+
+    def logger
+      @logger ||= Logger.new( Configuration.log_file )
     end
   end
 end

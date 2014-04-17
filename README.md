@@ -162,6 +162,8 @@ g.q( "g.E.has( 'weight', T.lt, 0.5f)" ) #=> [e(1xSj-tve-2W) [113412-friend-11341
 * 0.1.3 Spec'ed out Gremlin API
 * 0.1.4 Refactor graph elements
 * 0.1.5 Beef up specs + README
+* 0.1.6 Clean up
+* 0.1.7 Added logger
 
 ## Contributing
 

@@ -1,5 +1,9 @@
 module Wewoo
   class Configuration
+    def self.log_file(file=STDOUT)
+      @logger ||= file
+    end
+
     def self.debug(value=false)
       @debug ||= value
     end
